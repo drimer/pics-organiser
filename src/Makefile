@@ -9,13 +9,13 @@
 ####### Compiler, tools and options
 
 CC            = gcc
-CXX           = g++
+CXX           = i586-mingw32msvc-g++
 DEFINES       = -DQT_WEBKIT -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
-CFLAGS        = -m64 -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES)
-CXXFLAGS      = -m64 -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES)
+CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES) -march=x86-64
+CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES) -march=x86-64
 INCPATH       = -I/usr/share/qt4/mkspecs/linux-g++-64 -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I. -I.
-LINK          = g++
-LFLAGS        = -m64 -Wl,-O1
+LINK          = i586-mingw32msvc-g++
+LFLAGS        = -Wl,-O1 -march=x86-64
 LIBS          = $(SUBLIBS)  -L/usr/lib/x86_64-linux-gnu -lQtGui -lQtCore -lpthread 
 AR            = ar cqs
 RANLIB        = 
