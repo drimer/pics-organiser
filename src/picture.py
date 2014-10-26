@@ -54,8 +54,12 @@ class Picture(object):
         '''Datetime when the picture was taken.
 
         None if this data is non-retrievable.'''
-        date_str = self.exif_metadata.get('EXIF DateTimeOriginal').values
-        return datetime.datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S')
+        exif_datetime = self.exif_metadata.get('EXIF DateTimeOriginal')
+        if hasattr(exif_datetime, 'values'):
+            date_str = exif_datetime.values
+            return datetime.datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S')
+        else:
+            return None
 
 
 class PicturesCollection(object):
@@ -74,10 +78,13 @@ class PicturesCollection(object):
         '''Copies all pictures in collection to specified folder'''
         sorted_collection = SortedPicturesCollection(path)
         for picture in self.pictures:
-            year = picture.datetime_taken.year
-            month = picture.datetime_taken.month
-            day = picture.datetime_taken.day
-            dest_dir = '%04d/%02d/%02d/' % (year, month, day)
+            if picture.datetime_taken:
+                year = picture.datetime_taken.year
+                month = picture.datetime_taken.month
+                day = picture.datetime_taken.day
+                dest_dir = '%04d/%02d/%02d/' % (year, month, day)
+            else:
+                dest_dir = 'ni_idea_de_donde_van'
             sorted_collection.add(dest_dir, picture)
 
         sorted_collection.save_to_disk()
