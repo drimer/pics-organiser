@@ -25,6 +25,7 @@ def test_picture_finder_finds_jpg_pics():
     assert_in('test/files/DSC00470.JPG', pics_found)
     assert_in('test/files/DSC01051.JPG', pics_found)
     assert_in('test/files/DSC02228.JPG', pics_found)
+    assert_in('test/files/more/DSC02228.JPG', pics_found)
 
 
 def test_picture_finder_does_not_find_txts():

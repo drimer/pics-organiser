@@ -26,11 +26,12 @@ class TestPicturesCollection(object):
         collection = PicturesCollection('test/files')
         collection.sort_into_folder('test/sorted_pictures')
         sorted_pics_paths = (
-            'test/sorted_pictures/2010/09/15/DSC00316.JPG',
-            'test/sorted_pictures/2010/09/15/DSC00325.JPG',
-            'test/sorted_pictures/2010/09/20/DSC00470.JPG',
-            'test/sorted_pictures/2011/02/09/DSC01051.JPG',
-            'test/sorted_pictures/2011/07/18/DSC02228.JPG',
+            'test/sorted_pictures/2010/09/15/00001.jpg',
+            'test/sorted_pictures/2010/09/15/00002.jpg',
+            'test/sorted_pictures/2010/09/20/00003.jpg',
+            'test/sorted_pictures/2011/02/09/00004.jpg',
+            'test/sorted_pictures/2011/07/18/00005.jpg',
+            'test/sorted_pictures/2011/07/18/00006.jpg',
         )
         for pic_path in sorted_pics_paths:
             assert_file_is_picture(pic_path)

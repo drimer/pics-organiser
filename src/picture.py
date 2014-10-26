@@ -1,6 +1,7 @@
 import datetime
 import os
 import shutil
+from collections import defaultdict
 
 from exifread import process_file
 import magic as unix_file
@@ -71,16 +72,40 @@ class PicturesCollection(object):
 
     def sort_into_folder(self, path):
         '''Copies all pictures in collection to specified folder'''
+        sorted_collection = SortedPicturesCollection(path)
         for picture in self.pictures:
             year = picture.datetime_taken.year
             month = picture.datetime_taken.month
             day = picture.datetime_taken.day
-            dest_path = os.path.join(
-                path,
-                '%04d/%02d/%02d/' % (year, month, day),
-                picture.filename
-            )
-            copy_file(picture.path, dest_path)
+            dest_dir = '%04d/%02d/%02d/' % (year, month, day)
+            sorted_collection.add(dest_dir, picture)
+
+        sorted_collection.save_to_disk()
+
+
+class SortedPicturesCollection(object):
+    def __init__(self, root_dir):
+        self.root_dir = root_dir
+        self.__all_directories = []
+        self.__pictures_in_dirs = defaultdict(list)
+
+    def add(self, directory, picture):
+        if directory not in self.__all_directories:
+            self.__all_directories.append(directory)
+            self.__all_directories.sort()
+        self.__pictures_in_dirs[directory].append(picture)
+
+    def save_to_disk(self):
+        last_pic_number_used = 1
+        for directory in self.__all_directories:
+            for picture in self.__pictures_in_dirs[directory]:
+                dest_path = os.path.join(
+                    self.root_dir,
+                    directory,
+                    '%05d.jpg' % last_pic_number_used
+                )
+                copy_file(picture.path, dest_path)
+                last_pic_number_used += 1
 
 
 class PictureFinder(object):
