@@ -12,34 +12,29 @@ class MainWindow(wx.Frame):
         super(MainWindow, self).__init__(None, title=title, size=(700, 100))
         self.panel = wx.Panel(self)
 
-        top_sizer = wx.BoxSizer(wx.VERTICAL)
-        dirs_grid = wx.GridSizer(cols=3)
-
-        dir_to_sort_text = wx.StaticText(self.panel, label='Carpeta a ordenar')
-        dirs_grid.Add(dir_to_sort_text, flag=wx.EXPAND)
-
-        self.dir_to_sort_input = wx.TextCtrl(self.panel)
-        self.dir_to_sort_input.WriteText(os.getcwd())
-        dirs_grid.Add(self.dir_to_sort_input, flag=wx.EXPAND)
-
-        self.browse_input_button = wx.Button(self.panel, label='BROWSE')
-        dirs_grid.Add(self.browse_input_button)
-
-        dir_destination_text = wx.StaticText(self.panel, label='Nueva carpeta para fotos ordenadas')
-        dirs_grid.Add(dir_destination_text, flag=wx.EXPAND)
-
-        self.dir_destination_input = wx.TextCtrl(self.panel)
-        self.dir_destination_input.WriteText(os.getcwd())
-        dirs_grid.Add(self.dir_destination_input, flag=wx.EXPAND)
-
-        self.browse_output_button = wx.Button(self.panel, label='BROWSE')
-        dirs_grid.Add(self.browse_output_button)
-
+        self.input_path_label = wx.StaticText(self.panel, label='Carpeta a ordenar')
+        self.input_path_text = wx.TextCtrl(self.panel)
+        self.input_path_text.WriteText(os.getcwd())
+        self.input_path_button = wx.Button(self.panel, label='BROWSE')
+        self.output_path_label = wx.StaticText(self.panel, label='Nueva carpeta para fotos ordenadas')
+        self.output_path_text = wx.TextCtrl(self.panel)
+        self.output_path_text.WriteText(os.getcwd())
+        self.output_path_button = wx.Button(self.panel, label='BROWSE')
         self.organise_button = wx.Button(self.panel, label='Ordenar')
+
+        top_sizer = wx.BoxSizer(wx.VERTICAL)
+        paths_grid = wx.GridSizer(cols=3)
+        paths_grid.Add(self.input_path_label, flag=wx.EXPAND)
+        paths_grid.Add(self.input_path_text, flag=wx.EXPAND)
+        paths_grid.Add(self.input_path_button)
+        paths_grid.Add(self.output_path_label, flag=wx.EXPAND)
+        paths_grid.Add(self.output_path_text, flag=wx.EXPAND)
+        paths_grid.Add(self.output_path_button)
+
         button_sizer = wx.BoxSizer(wx.HORIZONTAL)
         button_sizer.Add(self.organise_button, flag=wx.ALIGN_CENTER)
 
-        top_sizer.Add(dirs_grid, flag=wx.EXPAND|wx.ALIGN_CENTER)
+        top_sizer.Add(paths_grid, flag=wx.EXPAND|wx.ALIGN_CENTER)
         top_sizer.Add(wx.StaticLine(self.panel), 0, wx.ALL|wx.EXPAND, 5)
         top_sizer.Add(button_sizer, flag=wx.ALIGN_CENTER)
         self.panel.SetSizer(top_sizer)
@@ -47,8 +42,8 @@ class MainWindow(wx.Frame):
         self.setup_handlers()
 
     def setup_handlers(self):
-        self.Bind(wx.EVT_BUTTON, self.on_browse_input_dir, self.browse_input_button)
-        self.Bind(wx.EVT_BUTTON, self.on_browse_output_dir, self.browse_output_button)
+        self.Bind(wx.EVT_BUTTON, self.on_browse_input_dir, self.input_path_button)
+        self.Bind(wx.EVT_BUTTON, self.on_browse_output_dir, self.output_path_button)
         self.Bind(wx.EVT_BUTTON, self.on_organise, self.organise_button)
 
     def on_organise(self, event):
@@ -68,16 +63,16 @@ class MainWindow(wx.Frame):
         dialog.Destroy()
 
     def get_source_path(self):
-        return self.dir_to_sort_input.GetValue()
+        return self.input_path_text.GetValue()
 
     def get_dest_path(self):
-        return self.dir_destination_input.GetValue()
+        return self.output_path_text.GetValue()
 
     def update_source_path(self, source_path):
-        self.dir_to_sort_input.SetValue(source_path)
+        self.input_path_text.SetValue(source_path)
 
     def update_dest_path(self, source_path):
-        self.dir_destination_input.SetValue(source_path)
+        self.output_path_text.SetValue(source_path)
 
     def on_browse_output_dir(self, event):
         dialog = wx.DirDialog(

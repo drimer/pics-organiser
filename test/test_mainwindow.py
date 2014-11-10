@@ -37,10 +37,10 @@ class TestMainWindow(unittest.TestCase):
 
     def test_organise_existing_dirs(self):
         wx.DirDialog.GetPath = lambda x: 'test_orig'
-        self.raise_button_clicked_event('browse_input_button')
+        self.raise_button_clicked_event('input_path_button')
 
         wx.DirDialog.GetPath = lambda x: 'test_dest'
-        self.raise_button_clicked_event('browse_output_button')
+        self.raise_button_clicked_event('output_path_button')
 
         self.raise_button_clicked_event('organise_button')
 
