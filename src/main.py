@@ -1,22 +1,17 @@
-import argparse
+#!/usr/bin/python
 
-from src.picture import PicturesCollection
+import sys
 
+from src.ui.mainwindow import MainWindow
 
-def parse_args():
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--pictures-directory', dest='input_dir')
-    parser.add_argument('--dest-directory', dest='output_dir')
-    options = parser.parse_args()
-
-    return options
+import wx
 
 
 def main():
-    opts = parse_args()
-    picture_collection = PicturesCollection(opts.input_dir)
-    picture_collection.sort_into_folder(opts.output_dir)
-
+    app = wx.App()
+    window = MainWindow()
+    window.Show()
+    app.MainLoop()
 
 if __name__ == '__main__':
     main()
