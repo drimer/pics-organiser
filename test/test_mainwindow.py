@@ -26,28 +26,22 @@ class TestMainWindow(unittest.TestCase):
         mainwindow.organise = self.backups['mainwindow.organise']
         wx.DirDialog.ShowModal = self.backups['wx.DirDialog.ShowModal']
 
-    def test_organise_exsiting_dirs(self):
-        wx.DirDialog.GetPath = lambda x: 'test_orig'
+    def raise_button_clicked_event(self, button_name):
+        button = getattr(self.win, button_name)
         event = wx.PyEvent(
-            self.win.browse_input_button.GetId(),
+            button.GetId(),
             wx.EVT_BUTTON.evtType[0]
         )
         wx.PostEvent(self.win, event)
         self.app.ProcessPendingEvents()
+
+    def test_organise_existing_dirs(self):
+        wx.DirDialog.GetPath = lambda x: 'test_orig'
+        self.raise_button_clicked_event('browse_input_button')
 
         wx.DirDialog.GetPath = lambda x: 'test_dest'
-        event = wx.PyEvent(
-            self.win.browse_output_button.GetId(),
-            wx.EVT_BUTTON.evtType[0]
-        )
-        wx.PostEvent(self.win, event)
-        self.app.ProcessPendingEvents()
+        self.raise_button_clicked_event('browse_output_button')
 
-        event = wx.PyEvent(
-            self.win.organise_button.GetId(),
-            wx.EVT_BUTTON.evtType[0]
-        )
-        wx.PostEvent(self.win, event)
-        self.app.ProcessPendingEvents()
+        self.raise_button_clicked_event('organise_button')
 
         mainwindow.organise.assert_called_once_with('test_orig', 'test_dest')
