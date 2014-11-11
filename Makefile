@@ -10,3 +10,7 @@ check-pylint:
 
 compile:
 	pyinstaller -F src/main.py
+
+clean:
+	find . -name "*.pyc" | xargs -n 1 rm -v
+	rm -rf build/ dist/ main.spec
