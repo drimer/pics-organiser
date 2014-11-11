@@ -2,10 +2,10 @@ language: python
 python:
   - "2.7"
 install:
-  - "sudo apt-get install python-wxgtk2.6"
+  - "sudo apt-get install python-wxgtk2.8"
   - "pip install exifread"
   - "pip install filemagic"
   - "pip install nose"
 before_script:
-  - "export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages/wx-2.6-gtk2-unicode/"
+  - "export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages/wx-2.8-gtk2-unicode/"
 script: "make check"
