@@ -4,5 +4,6 @@ python:
 install:
   - "sudo apt-get install python-wxgtk2.6"
   - "pip install exifread"
+  - "pip install filemagic"
   - "pip install nose"
 script: "make check"
