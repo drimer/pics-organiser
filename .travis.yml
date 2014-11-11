@@ -6,4 +6,6 @@ install:
   - "pip install exifread"
   - "pip install filemagic"
   - "pip install nose"
+before_script:
+  - "export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages/wx-2.6-gtk2-unicode/"
 script: "make check"
