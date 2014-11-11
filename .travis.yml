@@ -3,4 +3,4 @@ python:
   - "2.6"
 install:
   - "sudo apt-get install python-wxgtk2.6"
-script: make check
+script: "make check"
