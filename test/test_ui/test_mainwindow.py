@@ -5,7 +5,7 @@ try:
 except ImportError:
     from pprint import pprint
     import sys
-    pprint(sys.path)
+    sys.stderr.write(sys.path)
 
 from src import picture
 from src.ui import mainwindow
