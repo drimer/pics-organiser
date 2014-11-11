@@ -1,0 +1,10 @@
+[MASTER]
+persistent=no
+
+[REPORTS]
+output-format=parseable
+include-ids=yes
+reports=no
+
+[MESSAGES CONTROL]
+disable=R,F0010,F0401,C0103,C0111,I0011,W0312,W0604

@@ -1,6 +1,10 @@
 from nose.tools import assert_in, raises
 
-from src.picture import InvalidFileType, Picture, PictureFinder, PicturesCollection
+from src.picture import (
+    InvalidFileType,
+    Picture,
+    PictureFinder,
+)
 
 
 @raises(InvalidFileType)

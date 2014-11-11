@@ -7,7 +7,8 @@ from exifread import process_file
 import magic as unix_file
 
 
-class InvalidFileType(Exception): pass
+class InvalidFileType(Exception):
+    pass
 
 
 def is_image(path):

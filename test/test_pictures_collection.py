@@ -13,13 +13,13 @@ def assert_file_is_picture(path):
 
 
 class TestPicturesCollection(object):
-    def setup(self):
+    def setUp(self):
         self.sorted_pics_dir = 'test/sorted_pictures'
         if os.path.exists(self.sorted_pics_dir):
             shutil.rmtree(self.sorted_pics_dir)
         os.mkdir(self.sorted_pics_dir)
 
-    def teardown(self):
+    def tearDown(self):
         shutil.rmtree(self.sorted_pics_dir)
 
     def test_pictures_collection_is_sorted(self):

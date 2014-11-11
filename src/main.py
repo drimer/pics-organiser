@@ -1,7 +1,5 @@
 #!/usr/bin/python
 
-import sys
-
 from src.ui.mainwindow import MainWindow
 
 import wx
