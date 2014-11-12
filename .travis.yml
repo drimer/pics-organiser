@@ -8,4 +8,5 @@ install:
   - "pip install nose"
 before_script:
   - "export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages/wx-2.8-gtk2-unicode/"
+  - "export DISPLAY=:0"
 script: "make check"
