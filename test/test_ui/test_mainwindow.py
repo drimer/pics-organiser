@@ -1,7 +1,11 @@
 import unittest
-
-import mock
-import wx
+try:
+    import mock
+    import wx
+except ImportError:
+    from pprint import pprint
+    import sys
+    sys.stderr.write(str(sys.path))
 
 from src import picture
 from src.ui import mainwindow
