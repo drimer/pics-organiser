@@ -1,12 +1,58 @@
 import os
+from PyQt5 import QtGui
 
-import wx
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QLineEdit, QFileDialog
 
 from src.picture import PicturesCollection
 
 
-class MainWindow(wx.Frame):
-    def __init__(self, title="Window"):
+
+
+class MainWindow(QWidget):
+    def __init__(self, title=''):
+        super().__init__()
+
+        self.initUI(title)
+
+    def initUI(self, title):
+        src_hbox = QHBoxLayout()
+        src_hbox.addStretch(1)
+        src_folder_label = QLabel('Carpeta a ordenar')
+        src_hbox.addWidget(src_folder_label)
+        self.input_path_text = QLineEdit()
+        src_hbox.addWidget(self.input_path_text)
+        self.input_path_button = QPushButton('Browse')
+        src_hbox.addWidget(self.input_path_button)
+
+        dst_hbox = QHBoxLayout()
+        dst_hbox.addStretch(1)
+        src_folder_label = QLabel('Nueva carpeta para fotos ordenadas')
+        dst_hbox.addWidget(src_folder_label)
+        self.output_path_text = QLineEdit()
+        dst_hbox.addWidget(self.output_path_text)
+        self.output_path_button = QPushButton('Browse')
+        dst_hbox.addWidget(self.output_path_button)
+
+        vbox = QVBoxLayout()
+        vbox.addStretch(1)
+        vbox.addLayout(src_hbox)
+        vbox.addLayout(dst_hbox)
+
+        self.organise_button = QPushButton('Organise')
+        vbox.addWidget(self.organise_button)
+
+        self.setLayout(vbox)
+        self.setGeometry(300, 300, 600, 150)
+        self.setWindowTitle(title)
+
+        self.input_path_button.clicked.connect(self.on_browse_input)
+        self.output_path_button.clicked.connect(self.on_browse_output)
+        self.organise_button.clicked.connect(self.on_organise)
+
+        self.show()
+
+        return
+
         wx.Frame.__init__(self, None, title=title, size=(700, 100))
         self.panel = wx.Panel(self)
 
@@ -41,52 +87,34 @@ class MainWindow(wx.Frame):
 
         self.setup_handlers()
 
-    def setup_handlers(self):
-        self.Bind(wx.EVT_BUTTON, self.on_browse_input, self.input_path_button)
-        self.Bind(wx.EVT_BUTTON, self.on_browse_output, self.output_path_button)
-        self.Bind(wx.EVT_BUTTON, self.on_organise, self.organise_button)
+    def on_output_changed(self):
+        pass
 
-    def on_organise(self, event):
-        #pylint: disable=W0613
+    def on_input_changed(self):
+        pass
+
+    def on_organise(self):
         src = self.get_source_path()
         dest = self.get_dest_path()
         picture_collection = PicturesCollection(src)
         picture_collection.sort_into_folder(dest)
 
-    def on_browse_input(self, event):
-        #pylint: disable=W0613
-        dialog = wx.DirDialog(
-            self,
-            message='Elige un directorio',
-            defaultPath=self.get_source_path(),
-            style=wx.OPEN
-        )
-        status = dialog.ShowModal()
-        if status == wx.ID_OK:
-            self.update_source_path(dialog.GetPath())
-        dialog.Destroy()
-
     def get_source_path(self):
-        return self.input_path_text.GetValue()
+        return self.input_path_text.text()
 
     def get_dest_path(self):
-        return self.output_path_text.GetValue()
+        return self.output_path_text.text()
 
     def update_source_path(self, source_path):
-        self.input_path_text.SetValue(source_path)
+        self.input_path_text.setText(source_path)
 
     def update_dest_path(self, source_path):
-        self.output_path_text.SetValue(source_path)
+        self.output_path_text.setText(source_path)
 
-    def on_browse_output(self, event):
-        #pylint: disable=W0613
-        dialog = wx.DirDialog(
-            self,
-            message='Elige un directorio',
-            defaultPath=self.get_dest_path(),
-            style=wx.OPEN
-        )
-        status = dialog.ShowModal()
-        if status == wx.ID_OK:
-            self.update_dest_path(dialog.GetPath())
-        dialog.Destroy()
+    def on_browse_input(self):
+        path = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        self.update_source_path(path)
+
+    def on_browse_output(self):
+        path = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        self.update_dest_path(path)
