@@ -1,15 +1,22 @@
-Running the app
-===============
+Setting up for development
+==========================
+
+- Make a virtualenv with Python 2.7
+- Make sure the following packages are installed in your system:
+    - python-wxgtk2.8
+    - libmagic
+- Run:
 
 .. code-block:: bash
 
-    $ pip install pyinstaller==2.1
-    $ pip install exifread
-    $ apt-get install python-wxgtk2.8
-    $ make compile
+    $ make requirements-dev
 
-Ensure this directory is in contained in $PYTHONPATH (export PYTHONPATH=.:$PYTHONPATH)
 
-.. code-block:: bash
 
-    $ python src/main.py
+Building the app
+================
+
+$ make compile
+
+All arguments for this command are documented in Makefile.
+

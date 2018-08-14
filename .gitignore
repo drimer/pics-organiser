@@ -1,2 +1,14 @@
-*~
+# Python
 *.pyc
+
+# Build
+dist/
+build/
+main.spec
+MANIFEST
+*.egg-info/
+
+
+# PyCharm
+.idea/
+*~

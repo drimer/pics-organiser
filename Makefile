@@ -1,15 +1,35 @@
-all: compile
+# Options:
+# - TARGET_OS   One of: osx, windows, linux
 
-check: check-tests check-pylint
+OS := TARGET_OS
 
-check-tests:
+ifeq ($(OS),osx)
+	EXTRA_ARGS := --windowed
+endif
+ifeq ($(OS),windows)
+	EXTRA_ARGS := --windowed
+endif
+ifeq ($(OS),linux)
+	EXTRA_ARGS :=
+endif
+
+
+requirements:
+	pip install -r requirements/build.txt
+
+requirements-dev:
+	pip install -r requirements/dev.txt
+
+unit-tests:
 	nosetests -v
 
-check-pylint:
+lint:
 	git ls-files *.py | xargs -n 1 pylint --rcfile=extra/pylintrc .
 
-compile:
-	pyinstaller -F src/main.py
+test: unit-tests lint
+
+compile: requirements-dev
+	pyinstaller -F src/main.py $(EXTRA_ARGS)
 
 clean:
 	find . -name "*.pyc" | xargs -n 1 rm -v

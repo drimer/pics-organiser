@@ -1,0 +1,2 @@
+-r build.txt
+PyInstaller==3.3.1
