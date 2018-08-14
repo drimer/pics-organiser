@@ -28,7 +28,7 @@ unit-tests:
 
 .PHONY: lint
 lint:
-	git ls-files *.py | xargs -n 1 pylint --rcfile=extra/pylintrc .
+	pylint setup.py src --rcfile=extra/pylintrc .
 
 .PHONY: test
 test: requirements-dev unit-tests lint

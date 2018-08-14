@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
 import sys
-from src.ui.mainwindow import MainWindow
 
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication
+
+from src.ui.mainwindow import MainWindow
 
 
 def main():
