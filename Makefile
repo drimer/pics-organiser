@@ -26,10 +26,10 @@ unit-tests:
 lint:
 	git ls-files *.py | xargs -n 1 pylint --rcfile=extra/pylintrc .
 
-test: unit-tests lint
+test: requirements-dev unit-tests lint
 
 compile: requirements-dev
-	pyinstaller --clean -F src/main.py $(EXTRA_ARGS)
+	pyinstaller --clean -F src/main.py --hidden-import PyQt5.sip $(EXTRA_ARGS)
 
 clean:
 	find . -name "*.pyc" | xargs -n 1 rm -v

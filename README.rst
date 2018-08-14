@@ -3,7 +3,7 @@ Setting up for development
 
 - Make a virtualenv with Python 3 (note that currently 3.7 is not supported).
 - Make sure the following packages are installed in your system:
-    - python-wxgtk2.8
+    - python-qt5
     - libmagic
 - Run:
 
@@ -11,6 +11,10 @@ Setting up for development
 
     $ make requirements-dev
 
+
+In order to make wxPython happy, we need to use the "framework" version of Python's binary:
+- export PYTHONHOME="/path/to/your/venv"
+- Set PYTHON pointing to the framework bin, eg. "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3.6"
 
 
 Building the app
