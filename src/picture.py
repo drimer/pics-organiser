@@ -12,8 +12,9 @@ class InvalidFileType(Exception):
 
 
 def is_image(path):
-    with unix_file.Magic() as ufile:
-        return 'JPEG' in ufile.id_filename(path)
+    f = unix_file.Magic()
+    desc = f.from_file(path)
+    return 'JPEG' in desc
 
 
 def copy_file(src_path, dest_path):
@@ -34,9 +35,6 @@ class Picture(object):
         self.path = path
         self.__metadata = {}
 
-    def __repr__(self):
-        return self.path
-
     @property
     def filename(self):
         return os.path.basename(self.path)
@@ -45,7 +43,7 @@ class Picture(object):
     def exif_metadata(self):
         '''EXIF metadata found in the file'''
         if not self.__metadata:
-            with open(self.path, 'r') as f:
+            with open(self.path, 'rb') as f:
                 self.__metadata = process_file(f)
 
         return self.__metadata
@@ -55,8 +53,13 @@ class Picture(object):
         '''Datetime when the picture was taken.
 
         None if this data is non-retrievable.'''
-        date_str = self.exif_metadata.get('EXIF DateTimeOriginal').values
-        return datetime.datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S')
+        date_str = self.exif_metadata.get(
+            'EXIF DateTimeOriginal', self.exif_metadata.get('Image DateTime')
+        )
+        if date_str:
+            return datetime.datetime.strptime(date_str.values, '%Y:%m:%d %H:%M:%S')
+        else:
+            return None
 
 
 class PicturesCollection(object):
@@ -75,10 +78,13 @@ class PicturesCollection(object):
         '''Copies all pictures in collection to specified folder'''
         sorted_collection = SortedPicturesCollection(path)
         for picture in self.pictures:
-            year = picture.datetime_taken.year
-            month = picture.datetime_taken.month
-            day = picture.datetime_taken.day
-            dest_dir = '%04d/%02d/%02d/' % (year, month, day)
+            if picture.datetime_taken:
+                year = picture.datetime_taken.year
+                month = picture.datetime_taken.month
+                day = picture.datetime_taken.day
+                dest_dir = '%04d/%02d/%02d/' % (year, month, day)
+            else:
+                dest_dir = 'unknown/'
             sorted_collection.add(dest_dir, picture)
 
         sorted_collection.save_to_disk()
