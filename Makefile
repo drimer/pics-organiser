@@ -1,5 +1,5 @@
 # Options:
-# - TARGET_OS   One of: osx, windows, linux
+# - TARGET_OS   One of: osx, windows, linux.
 
 OS := TARGET_OS
 
@@ -29,7 +29,7 @@ lint:
 test: unit-tests lint
 
 compile: requirements-dev
-	pyinstaller -F src/main.py $(EXTRA_ARGS)
+	pyinstaller --clean -F src/main.py $(EXTRA_ARGS)
 
 clean:
 	find . -name "*.pyc" | xargs -n 1 rm -v

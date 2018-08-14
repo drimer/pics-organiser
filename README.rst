@@ -1,7 +1,7 @@
 Setting up for development
 ==========================
 
-- Make a virtualenv with Python 2.7
+- Make a virtualenv with Python 3 (note that currently 3.7 is not supported).
 - Make sure the following packages are installed in your system:
     - python-wxgtk2.8
     - libmagic
