@@ -14,18 +14,23 @@ ifeq ($(OS),linux)
 endif
 
 
+.PHONY: requirements
 requirements:
 	pip install -r requirements/build.txt
 
+.PHONY: requirements-dev
 requirements-dev:
 	pip install -r requirements/dev.txt
 
+.PHONY: unit-tests
 unit-tests:
 	nosetests -v
 
+.PHONY: lint
 lint:
 	git ls-files *.py | xargs -n 1 pylint --rcfile=extra/pylintrc .
 
+.PHONY: test
 test: requirements-dev unit-tests lint
 
 compile: requirements-dev
