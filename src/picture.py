@@ -3,8 +3,8 @@ import os
 import shutil
 from collections import defaultdict
 
-from exifread import process_file
-import magic as unix_file
+from PIL import Image
+import piexif
 
 
 class InvalidFileType(Exception):
@@ -12,8 +12,7 @@ class InvalidFileType(Exception):
 
 
 def is_image(path):
-    with unix_file.Magic() as ufile:
-        return 'JPEG' in ufile.id_filename(path)
+    return path.lower().endswith(('.png', '.jpg', '.jpeg'))
 
 
 def copy_file(src_path, dest_path):
@@ -43,20 +42,27 @@ class Picture(object):
 
     @property
     def exif_metadata(self):
-        '''EXIF metadata found in the file'''
-        if not self.__metadata:
-            with open(self.path, 'r') as f:
-                self.__metadata = process_file(f)
+        img = Image.open(self.path)
+        
+        if 'exif' in img.info:
+            try:
+                self.__metadata = piexif.load(img.info['exif'])
+            except:
+                self.__metadata = defaultdict(dict)
+        else:
+            self.__metadata = defaultdict(dict)
 
         return self.__metadata
 
     @property
     def datetime_taken(self):
-        '''Datetime when the picture was taken.
-
-        None if this data is non-retrievable.'''
-        date_str = self.exif_metadata.get('EXIF DateTimeOriginal').values
-        return datetime.datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S')
+        bin_datetime = self.exif_metadata['Exif'].get(piexif.ExifIFD.DateTimeOriginal)
+        if bin_datetime:
+            return datetime.datetime.strptime(bin_datetime.decode(), '%Y:%m:%d %H:%M:%S')
+    
+    @datetime_taken.setter
+    def datetime_taken(self, value):
+        self.exif_metadata['Exif'][piexif.ExifIFD.DateTimeOriginal] = value
 
 
 class PicturesCollection(object):
