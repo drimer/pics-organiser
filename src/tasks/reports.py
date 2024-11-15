@@ -4,29 +4,17 @@ import os
 import glob
 
 from files.manager import PictureManager
-from files.picture import is_image_file
+from files.picture import Picture, is_image_file
 
 
-def report_imgs_without_exif_date(path: str, ):
-    print('===> Starting report')
+def report_imgs_without_exif_date(path: str, picture_manager: PictureManager) -> list[Picture]:
+    images_without_date = []
     
-    paths_list = glob.glob(f"{path}\\**\\*", recursive=True)
-    files_list = [path for path in paths_list if os.path.isfile(path)]
-    total = 0
+    pictures_collection = picture_manager.find_images(path)
+    for picture in pictures_collection:
+        if picture.datetime_taken is None:
+            images_without_date.append(picture)
     
-    for file_path in files_list:
-        if not is_image_file(file_path):
-            continue
+    return images_without_date
 
-        try:
-            img = Image.open(file_path)
-        except:
-            print(f"Something wrong with {file_path}")
-            continue
-
-        if 'exif' not in img.info:
-            total += 1
-            print(file_path)
-    
-    print(f"Total: {total}")
     

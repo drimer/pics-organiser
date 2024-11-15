@@ -1,3 +1,4 @@
+import glob
 import os
 from PIL import Image
 
@@ -21,8 +22,22 @@ class PictureFinder(object):
 
 class PictureManager:
     def find_images(self, path):
-        image_finder = PictureFinder(path)
-        return image_finder.find_all()
+        paths_list = glob.glob(f"{path}\\**\\*", recursive=True)
+        files_list = (path for path in paths_list if os.path.isfile(path))
+        
+        for file_path in files_list:
+            if not is_image_file(file_path):
+                continue
+
+            # TODO: Pull this out into separate report so I can know what images
+            # it fails to open
+            try:
+                img = Image.open(file_path)
+            except:
+                print(f"Something wrong with {file_path}")
+                continue
+        
+            yield Picture(file_path)
 
     def get_image(self, name):
         return Image.open(os.path.join)
