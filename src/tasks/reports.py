@@ -1,12 +1,9 @@
 from collections import defaultdict
 from PIL import Image
-import click
-import piexif
 import os
 import glob
 
-from cli import cli
-
+from files.manager import PictureManager
 from files.picture import is_image_file
 
 

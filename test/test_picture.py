@@ -2,11 +2,12 @@ import os
 
 import pytest
 
-from src.files.picture import (
+from files.picture import (
     InvalidFileType,
     Picture,
-    PictureFinder,
 )
+from files.manager import PictureFinder
+
 
 def test_txt_is_not_picture():
     with pytest.raises(InvalidFileType):

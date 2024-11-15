@@ -1,12 +1,11 @@
 import click
 
+from tasks.reports import report_imgs_without_exif_date
+
 
 @click.group()
 def cli():
     pass
-
-
-from tasks.reports import report_imgs_without_exif_date
 
     
 @cli.command()
