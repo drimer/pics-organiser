@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from src.picture import InvalidFileType, Picture, PicturesCollection
+from src.files.picture import InvalidFileType, Picture, PicturesCollection
 
 
 def assert_file_is_picture(path):

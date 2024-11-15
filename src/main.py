@@ -5,6 +5,8 @@ import piexif
 import os
 import glob
 
+from cli import cli
+
 
 def is_image_file(path):
     return path.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'))
@@ -83,29 +85,6 @@ def set_exif_date_from_path(path):
             print(f"Could not save {file_path}")
             continue
 
-
-def report_imgs_without_exif_date(path):
-    print('===> Starting report')
-    
-    paths_list = glob.glob(f"{path}\\**\\*", recursive=True)
-    files_list = [path for path in paths_list if os.path.isfile(path)]
-    total = 0
-    
-    for file_path in files_list:
-        if not is_image_file(file_path):
-            continue
-
-        try:
-            img = Image.open(file_path)
-        except:
-            print(f"Something wrong with {file_path}")
-            continue
-
-        if 'exif' not in img.info:
-            total += 1
-            print(file_path)
-    
-    print(f"Total: {total}")
             
             
 def set_exif_date_in_path_with_hardcoded_date(path, date_bin):
@@ -146,16 +125,7 @@ def set_exif_date_in_path_with_hardcoded_date(path, date_bin):
             continue
 
 
-@click.group()
-def cli():
-    pass
 
-
-@cli.command()
-@click.option('--dir-path', help='Path to the folder with the images')
-def report(dir_path):
-    report_imgs_without_exif_date(dir_path)
-    
     
     
 if __name__ == "__main__":

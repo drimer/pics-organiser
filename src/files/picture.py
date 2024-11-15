@@ -11,7 +11,7 @@ class InvalidFileType(Exception):
     pass
 
 
-def is_image(path):
+def is_image_file(path):
     return path.lower().endswith(('.png', '.jpg', '.jpeg'))
 
 
@@ -27,7 +27,7 @@ class Picture(object):
     '''Picture file in disk'''
 
     def __init__(self, path):
-        if not is_image(path):
+        if not is_image_file(path):
             raise InvalidFileType('File %s is not a piture' % path)
 
         self.path = path
@@ -81,10 +81,13 @@ class PicturesCollection(object):
         '''Copies all pictures in collection to specified folder'''
         sorted_collection = SortedPicturesCollection(path)
         for picture in self.pictures:
-            year = picture.datetime_taken.year
-            month = picture.datetime_taken.month
-            day = picture.datetime_taken.day
-            dest_dir = '%04d/%02d/%02d/' % (year, month, day)
+            if picture.datetime_taken is None:
+                dest_dir = 'unknown/'
+            else:
+                year = picture.datetime_taken.year
+                month = picture.datetime_taken.month
+                day = picture.datetime_taken.day
+                dest_dir = '%04d/%02d/%02d/' % (year, month, day)
             sorted_collection.add(dest_dir, picture)
 
         sorted_collection.save_to_disk()
@@ -126,5 +129,5 @@ class PictureFinder(object):
         for root, _, files in os.walk(self.path):
             for filename in files:
                 abs_path = os.path.join(root, filename)
-                if is_image(abs_path):
+                if is_image_file(abs_path):
                     yield Picture(abs_path)

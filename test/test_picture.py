@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from src.picture import (
+from src.files.picture import (
     InvalidFileType,
     Picture,
     PictureFinder,
