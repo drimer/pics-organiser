@@ -1,7 +1,7 @@
 import click
 
 from files.manager import PictureManager
-from tasks.reports import report_imgs_without_exif_date
+from tasks.reports import report_imgs_where_path_date_not_in_exif, report_imgs_without_exif_date
 
 
 @click.group()
@@ -20,3 +20,9 @@ def no_exif(dir_path):
     for img in report_imgs_without_exif_date(dir_path, PictureManager()):
         print(img)
     
+
+@report.command()
+@click.option('--dir-path', help='Path to the folder with the images')
+def date_not_in_path(dir_path):
+    for img in report_imgs_where_path_date_not_in_exif(dir_path, PictureManager()):
+        print(img)

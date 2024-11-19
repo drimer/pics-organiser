@@ -13,6 +13,12 @@ class File:
     @property
     def filename(self):
         return os.path.basename(self.path)
+    
+    @property
+    def parent_folders_as_list(self):
+        return list(
+            filter(lambda x: x, os.path.dirname(self.path).split(os.path.sep))
+        )
 
     @property
     def size(self):
