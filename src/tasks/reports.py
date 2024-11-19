@@ -16,5 +16,3 @@ def report_imgs_without_exif_date(path: str, picture_manager: PictureManager) ->
             images_without_date.append(picture)
     
     return images_without_date
-
-    
