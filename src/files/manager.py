@@ -41,3 +41,7 @@ class PictureManager:
 
     def get_image(self, name):
         return Image.open(os.path.join)
+
+    def save(self, picture: Picture, path: str, format: str, exif: any):
+        img = Image.open(picture.path)
+        img.save(path, format, exif=exif)
