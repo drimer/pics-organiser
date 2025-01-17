@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=65.5.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pics-organiser"
+version = "0.1.0"
+description = "A CLI application that helps organise albums of pictures."
+readme = "README.rst"
+authors = [{ name = "Alberto Aguilera" }]
+dependencies = [
+    "click >= 8.1.3",
+]
+
+[project.scripts]
+calc = "src.cli:cli"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+pythonpath = "src"
