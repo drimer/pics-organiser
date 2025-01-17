@@ -1,4 +1,5 @@
 import datetime
+import os.path
 from collections import defaultdict
 
 from PIL import Image
@@ -9,6 +10,10 @@ from files.file import File
 
 def is_image_file(path):
     return path.lower().endswith(('.png', '.jpg', '.jpeg'))
+
+
+def get_path_as_list(path: str) -> list:
+    return path.split(os.path.sep)
 
 
 class InvalidFileType(Exception):
