@@ -3,15 +3,13 @@ import os
 import piexif
 
 from files.manager import PictureManager
+from files.picture import get_path_as_list
 
 
-def get_date_bin_from_full_path(path):
-    day_dir_path = os.path.dirname(path)
-    day_dir_name = os.path.basename(day_dir_path)
-    month_dir_path = os.path.dirname(day_dir_path)
-    month_dir_name = os.path.basename(month_dir_path)
-    year_dir_path = os.path.dirname(month_dir_path)
-    year_dir_name = os.path.basename(year_dir_path)
+def guess_date_using_year_month_day_pattern(path_as_list: list[str]):
+    day_dir_name = path_as_list[-2]
+    month_dir_name = path_as_list[-3]
+    year_dir_name = path_as_list[-4]
 
     month_first_chars = month_dir_name.split(".")[0]
     month_str = f"{int(month_first_chars):0>2}"
@@ -23,12 +21,31 @@ def get_date_bin_from_full_path(path):
         day_first_chars = day_first_chars_possible_range
     day_str = f"{int(day_first_chars):0>2}"
 
-    # The above can atch a lot of weird things. Verify that the date is valid
     if int(year_dir_name) > 1988 and int(month_str) > 12 or int(day_str) > 31:
-        raise ValueError("Invalid date")
+        return None
 
-    date_str = f"{year_dir_name}:{month_str}:{day_str}"
-    date_bin = f"{date_str} 12:34:56".encode("ascii")
+    return f"{year_dir_name}:{month_str}:{day_str}"
+
+
+def guess_date_using_year_month_pattern(path_as_list: list[str]):
+    month_dir_name = path_as_list[-1]
+    year_dir_name = path_as_list[-2]
+
+    month_first_chars = month_dir_name.split(".")[0]
+    month_str = f"{int(month_first_chars):0>2}"
+
+    if int(year_dir_name) > 1988 and int(month_str) > 12:
+        return None
+
+    return f"{year_dir_name}:{month_str}:15"
+
+
+def guess_date_bin_from_full_path(path_as_list: list[str]):
+    guess_attempt = guess_date_using_year_month_day_pattern(path_as_list)
+    if not guess_attempt:
+        guess_attempt = guess_date_using_year_month_pattern(path_as_list)
+
+    date_bin = f"{guess_attempt} 12:34:56".encode("ascii")
     return date_bin
 
 
@@ -41,13 +58,7 @@ def set_exif_date_from_path(path: str, picture_manager: PictureManager) -> list[
         if picture.exif_metadata['Exif'].get(piexif.ExifIFD.DateTimeOriginal):
             continue
 
-        try:
-            date_bin = get_date_bin_from_full_path(picture.path)
-        except:
-            try:
-                date_bin = get_date_bin_from_full_path(os.path.dirname(picture.path))
-            except:
-                continue
+        date_bin = guess_date_bin_from_full_path(get_path_as_list(picture.path))
 
         picture.exif_metadata['Exif'][piexif.ExifIFD.DateTimeOriginal] = date_bin
         exif_bytes = piexif.dump(picture.exif_metadata)
