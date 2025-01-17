@@ -18,7 +18,7 @@ class PictureFinder(object):
                 abs_path = os.path.join(root, filename)
                 if is_image_file(abs_path):
                     yield Picture(abs_path)
-                    
+
 
 class PictureManager:
     def find_images(self, path):
@@ -32,7 +32,7 @@ class PictureManager:
             # TODO: Pull this out into separate report so I can know what images
             # it fails to open
             try:
-                img = Image.open(file_path)
+                Image.open(file_path)
             except:
                 print(f"Something wrong with {file_path}")
                 continue

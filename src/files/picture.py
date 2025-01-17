@@ -16,11 +16,11 @@ class InvalidFileType(Exception):
 
 
 class Picture(File):
-    '''Picture file in disk'''
+    """Picture file in disk"""
 
     def __init__(self, path):
         if not is_image_file(path):
-            raise InvalidFileType('File %s is not a piture' % path)
+            raise InvalidFileType('File %s is not a picture' % path)
 
         super().__init__(path)
         self.__metadata = {}

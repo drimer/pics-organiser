@@ -1,7 +1,5 @@
 from datetime import datetime
 import mock
-import pytest
-from files.manager import PictureManager
 from tasks.reports import report_imgs_where_path_date_not_in_exif, report_imgs_without_exif_date
 
 

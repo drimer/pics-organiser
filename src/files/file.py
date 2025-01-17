@@ -10,9 +10,16 @@ class File:
     def __repr__(self):
         return self.path
 
+    def __eq__(self, other):
+        return self.abspath == other.abspath
+
     @property
     def filename(self):
         return os.path.basename(self.path)
+
+    @property
+    def abspath(self):
+        return os.path.abspath(self.path)
     
     @property
     def parent_folders_as_list(self):

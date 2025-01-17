@@ -1,8 +1,3 @@
-from collections import defaultdict
-from PIL import Image
-import os
-import glob
-
 from files.manager import PictureManager
 from files.picture import Picture, is_image_file
 
