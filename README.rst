@@ -16,5 +16,5 @@ Ensure this directory is in contained in $PYTHONPATH (export PYTHONPATH=.:$PYTHO
 
 
 Most useful commands:
-1. python src/main.py report no-exif --dir-path "/mnt/usb/DCIM/100CANON"
-2. python src/main.py edit set-exif-date --date "2025:04:08 12:34:56" "some/images"*".jpg"
+1. python src/main.py report no-exif --dir-path "/mnt/c/Users/drime/OneDrive/Pictures/Samsung Gallery/Fotos/"
+2. python src/main.py edit set-exif-date --date "2024:09:25 12:34:57" "/mnt/c/Users/drime/OneDrive/Pictures/Samsung Gallery/Fotos/2024/9. September/20240925"*".jpg"
