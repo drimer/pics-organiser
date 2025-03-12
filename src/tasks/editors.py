@@ -1,4 +1,4 @@
-import os
+from typing import List
 
 import piexif
 
@@ -6,7 +6,7 @@ from files.manager import PictureManager
 from files.picture import get_path_as_list
 
 
-def guess_date_using_year_month_day_pattern(path_as_list: list[str]):
+def guess_date_using_year_month_day_pattern(path_as_list: List[str]):
     day_dir_name = path_as_list[-2]
     month_dir_name = path_as_list[-3]
     year_dir_name = path_as_list[-4]
@@ -27,7 +27,7 @@ def guess_date_using_year_month_day_pattern(path_as_list: list[str]):
     return f"{year_dir_name}:{month_str}:{day_str}"
 
 
-def guess_date_using_year_month_pattern(path_as_list: list[str]):
+def guess_date_using_year_month_pattern(path_as_list: List[str]):
     month_dir_name = path_as_list[-1]
     year_dir_name = path_as_list[-2]
 
@@ -40,7 +40,7 @@ def guess_date_using_year_month_pattern(path_as_list: list[str]):
     return f"{year_dir_name}:{month_str}:15"
 
 
-def guess_date_bin_from_full_path(path_as_list: list[str]):
+def guess_date_bin_from_full_path(path_as_list: List[str]):
     guess_attempt = guess_date_using_year_month_day_pattern(path_as_list)
     if not guess_attempt:
         guess_attempt = guess_date_using_year_month_pattern(path_as_list)
@@ -49,18 +49,18 @@ def guess_date_bin_from_full_path(path_as_list: list[str]):
     return date_bin
 
 
-def set_exif_date_from_path(path: str, picture_manager: PictureManager) -> list[tuple]:
+def set_exif_date_from_path(path: str, picture_manager: PictureManager) -> List[tuple]:
     print(f"===> Setting dates from path {path}")
     edited_pictures = []
 
     for picture in picture_manager.find_images(path):
         # Do not overwrite existing date
-        if picture.exif_metadata['Exif'].get(piexif.ExifIFD.DateTimeOriginal):
+        if picture.exif_metadata["Exif"].get(piexif.ExifIFD.DateTimeOriginal):
             continue
 
         date_bin = guess_date_bin_from_full_path(get_path_as_list(picture.path))
 
-        picture.exif_metadata['Exif'][piexif.ExifIFD.DateTimeOriginal] = date_bin
+        picture.exif_metadata["Exif"][piexif.ExifIFD.DateTimeOriginal] = date_bin
         exif_bytes = piexif.dump(picture.exif_metadata)
 
         picture_manager.save(picture, picture.path, "jpeg", exif=exif_bytes)
@@ -68,3 +68,11 @@ def set_exif_date_from_path(path: str, picture_manager: PictureManager) -> list[
         edited_pictures.append((picture.path, date_bin))
 
     return edited_pictures
+
+
+def set_exif_date(file_path: str, date: str, picture_manager: PictureManager):
+    picture = picture_manager.get_image(file_path)
+    picture.datetime_taken = date.encode("ascii")
+    exif_bytes = piexif.dump(picture.exif_metadata)
+
+    picture_manager.save(picture, picture.path, "jpeg", exif=exif_bytes)

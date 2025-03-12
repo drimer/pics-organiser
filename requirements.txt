@@ -1,6 +1,5 @@
 click
 mock
-rasterio==1.4.2
 piexif
 Pillow
 pytest
