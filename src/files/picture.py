@@ -55,6 +55,9 @@ class Picture(File):
 
     @property
     def location(self):
+        import ipdb
+
+        ipdb.set_trace()
         gps = self.exif_metadata["GPS"]
         if not gps:
             return None
@@ -70,3 +73,7 @@ class Picture(File):
             return None
 
         return lat, lat_ref, lon, lon_ref
+
+    @location.setter
+    def location(self, value):
+        self.exif_metadata["GPS"] = value
