@@ -13,6 +13,15 @@ def report_imgs_without_exif_date(
             yield picture
 
 
+def report_imgs_without_exif_location(
+    path: str, picture_manager: PictureManager
+) -> Generator[Picture, None, None]:
+    pictures_collection = picture_manager.find_images(path)
+    for picture in pictures_collection:
+        if picture.location is None:
+            yield picture
+
+
 def report_imgs_where_path_date_not_in_exif(
     path: str, picture_manager: PictureManager
 ) -> List[Picture]:

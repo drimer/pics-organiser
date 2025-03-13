@@ -52,3 +52,21 @@ class Picture(File):
     @datetime_taken.setter
     def datetime_taken(self, value):
         self.exif_metadata["Exif"][piexif.ExifIFD.DateTimeOriginal] = value
+
+    @property
+    def location(self):
+        gps = self.exif_metadata["GPS"]
+        if not gps:
+            return None
+
+        lat = gps.get(piexif.GPSIFD.GPSLatitude)
+        lon = gps.get(piexif.GPSIFD.GPSLongitude)
+        if not lat or not lon:
+            return None
+
+        lat_ref = gps.get(piexif.GPSIFD.GPSLatitudeRef)
+        lon_ref = gps.get(piexif.GPSIFD.GPSLongitudeRef)
+        if not lat_ref or not lon_ref:
+            return None
+
+        return lat, lat_ref, lon, lon_ref

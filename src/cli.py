@@ -5,6 +5,7 @@ from tasks.editors import set_exif_date, set_exif_date_from_path
 from tasks.reports import (
     report_imgs_where_path_date_not_in_exif,
     report_imgs_without_exif_date,
+    report_imgs_without_exif_location,
 )
 
 
@@ -18,10 +19,17 @@ def report():
     pass
 
 
-@report.command()
+@report.command("no-exif-date")
 @click.option("--dir-path", help="Path to the folder with the images")
-def no_exif(dir_path):
+def date_not_in_exif(dir_path):
     for img in report_imgs_without_exif_date(dir_path, PictureManager()):
+        print(img)
+
+
+@report.command("no-exif-location")
+@click.option("--dir-path", help="Path to the folder with the images")
+def location_not_in_exif(dir_path):
+    for img in report_imgs_without_exif_location(dir_path, PictureManager()):
         print(img)
 
 
