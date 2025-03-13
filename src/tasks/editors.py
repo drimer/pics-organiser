@@ -1,4 +1,4 @@
-from typing import List
+from typing import Generator, List
 
 import piexif
 
@@ -49,9 +49,10 @@ def guess_date_bin_from_full_path(path_as_list: List[str]):
     return date_bin
 
 
-def set_exif_date_from_path(path: str, picture_manager: PictureManager) -> List[tuple]:
+def set_exif_date_from_path(
+    path: str, picture_manager: PictureManager
+) -> Generator[tuple, None, None]:
     print(f"===> Setting dates from path {path}")
-    edited_pictures = []
 
     for picture in picture_manager.find_images(path):
         # Do not overwrite existing date
@@ -65,9 +66,7 @@ def set_exif_date_from_path(path: str, picture_manager: PictureManager) -> List[
 
         picture_manager.save(picture, picture.path, "jpeg", exif=exif_bytes)
 
-        edited_pictures.append((picture.path, date_bin))
-
-    return edited_pictures
+        yield (picture.path, date_bin)
 
 
 def set_exif_date(file_path: str, date: str, picture_manager: PictureManager):

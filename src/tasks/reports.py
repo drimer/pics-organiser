@@ -1,4 +1,4 @@
-from typing import List
+from typing import Generator, List
 
 from files.manager import PictureManager
 from files.picture import Picture
@@ -6,15 +6,11 @@ from files.picture import Picture
 
 def report_imgs_without_exif_date(
     path: str, picture_manager: PictureManager
-) -> List[Picture]:
-    images_without_date = []
-
+) -> Generator[Picture, None, None]:
     pictures_collection = picture_manager.find_images(path)
     for picture in pictures_collection:
         if picture.datetime_taken is None:
-            images_without_date.append(picture)
-
-    return images_without_date
+            yield picture
 
 
 def report_imgs_where_path_date_not_in_exif(

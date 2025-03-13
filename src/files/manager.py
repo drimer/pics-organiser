@@ -1,5 +1,7 @@
 import glob
+import itertools
 import os
+from typing import Generator
 
 from PIL import Image
 
@@ -22,8 +24,10 @@ class PictureFinder(object):
 
 
 class PictureManager:
-    def find_images(self, path):
-        paths_list = glob.glob(f"{path}\\**\\*", recursive=True)
+    def find_images(self, path) -> Generator[Picture, None, None]:
+        win_paths_list = glob.glob(f"{path}\\**\\*", recursive=True)
+        unix_paths_list = glob.glob(f"{path}/**/*", recursive=True)
+        paths_list = itertools.chain(win_paths_list, unix_paths_list)
         files_list = (path for path in paths_list if os.path.isfile(path))
 
         for file_path in files_list:
