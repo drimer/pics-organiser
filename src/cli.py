@@ -1,7 +1,12 @@
 import click
 
 from files.manager import PictureManager
-from tasks.editors import set_exif_date, set_exif_date_from_path, set_exif_location
+from tasks.editors import (
+    convert_dd_pair_location_to_piexif_gps_dms,
+    set_exif_date,
+    set_exif_date_from_path,
+    set_exif_gps_location,
+)
 from tasks.reports import (
     report_imgs_where_path_date_not_in_exif,
     report_imgs_without_exif_date,
@@ -65,50 +70,8 @@ def set_exif_date_cli(date, file_paths):
 @click.argument("location", nargs=2)
 @click.argument("file_paths", nargs=-1)
 def set_exif_location_cli(location, file_paths):
-    location_as_dms = dd2dms(float(location[0]), float(location[1]))
+    location_as_dms = convert_dd_pair_location_to_piexif_gps_dms(
+        float(location[0]), float(location[1])
+    )
     for file_path in file_paths:
-        set_exif_location(file_path, location_as_dms, PictureManager())
-
-
-def dd2dms(dd1, dd2):
-    """Convert a decimal degree coordinate pair to a six-tuple of degrees, minutes seconds.
-
-    The returned values are not rounded.
-
-    Arguments
-
-    dd1, dd2 - coordinate pair, in decimal degrees
-
-    Example
-
-      >>> dd2dms(-74.25,32.1)
-      (-74, 15, 6.9444444444444444e-05, 32, 6, 2.7777777777778172e-05)
-    """
-
-    def ToDMS(dd):
-        dd1 = abs(float(dd))
-        cdeg = int(dd1)
-        minsec = dd1 - cdeg
-        cmin = int(minsec * 60)
-        csec = ((minsec % 60) / float(3600)) * (10**11)
-        return cdeg, cmin, int(csec)
-
-    try:
-        return {
-            1: b"N" if dd1 >= 0 else b"S",
-            2: (
-                (ToDMS(dd1)[0], 1),
-                (ToDMS(dd1)[1], 1),
-                (ToDMS(dd1)[2], 10**6),
-            ),
-            3: b"E" if dd2 >= 0 else b"W",
-            4: (
-                (ToDMS(dd2)[0], 1),
-                (ToDMS(dd2)[1], 1),
-                (ToDMS(dd2)[2], 10**6),
-            ),
-            5: 0,
-            6: (1, 1),
-        }
-    except:
-        raise Exception("Invalid input")
+        set_exif_gps_location(file_path, location_as_dms, PictureManager())

@@ -49,6 +49,39 @@ def guess_date_bin_from_full_path(path_as_list: List[str]):
     return date_bin
 
 
+def convert_dd_location_to_dms(dd):
+    dd1 = abs(float(dd))
+    cdeg = int(dd1)
+    minsec = dd1 - cdeg
+    cmin = int(minsec * 60)
+    csec = ((minsec % 60) / float(3600)) * (10**11)
+    return cdeg, cmin, int(csec)
+
+
+def convert_dd_pair_location_to_piexif_gps_dms(dd1: float, dd2: float) -> dict:
+    try:
+        float(dd1), float(dd2)
+    except:
+        raise Exception("Invalid input")
+
+    return {
+        1: b"N" if dd1 >= 0 else b"S",
+        2: (
+            (convert_dd_location_to_dms(dd1)[0], 1),
+            (convert_dd_location_to_dms(dd1)[1], 1),
+            (convert_dd_location_to_dms(dd1)[2], 10**6),
+        ),
+        3: b"E" if dd2 >= 0 else b"W",
+        4: (
+            (convert_dd_location_to_dms(dd2)[0], 1),
+            (convert_dd_location_to_dms(dd2)[1], 1),
+            (convert_dd_location_to_dms(dd2)[2], 10**6),
+        ),
+        5: 0,
+        6: (1, 1),
+    }
+
+
 def set_exif_date_from_path(
     path: str, picture_manager: PictureManager
 ) -> Generator[tuple, None, None]:
@@ -77,9 +110,11 @@ def set_exif_date(file_path: str, date: str, picture_manager: PictureManager):
     picture_manager.save(picture, picture.path, "jpeg", exif=exif_bytes)
 
 
-def set_exif_location(file_path: str, gps: dict, picture_manager: PictureManager):
+def set_exif_gps_location(
+    file_path: str, dms_location: dict, picture_manager: PictureManager
+):
     picture = picture_manager.get_image(file_path)
-    picture.exif_metadata["GPS"] = gps
+    picture.exif_metadata["GPS"] = dms_location
     exif_bytes = piexif.dump(picture.exif_metadata)
 
     picture_manager.save(picture, picture.path, "jpeg", exif=exif_bytes)
