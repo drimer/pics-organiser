@@ -70,7 +70,7 @@ def set_exif_location_cli(location, file_paths):
         set_exif_location(file_path, location_as_dms, PictureManager())
 
 
-def dd2dms(dd1, dd2, ndec=6):
+def dd2dms(dd1, dd2):
     """Convert a decimal degree coordinate pair to a six-tuple of degrees, minutes seconds.
 
     The returned values are not rounded.
@@ -85,41 +85,27 @@ def dd2dms(dd1, dd2, ndec=6):
       (-74, 15, 6.9444444444444444e-05, 32, 6, 2.7777777777778172e-05)
     """
 
-    # Author: Curtis Price, http://profile.usgs.gov/cprice
-    # Disclaimer: Not approved by USGS. (Provisional, subject to revision.)
-    def ToDMS(dd, ndec):
+    def ToDMS(dd):
         dd1 = abs(float(dd))
         cdeg = int(dd1)
         minsec = dd1 - cdeg
         cmin = int(minsec * 60)
         csec = ((minsec % 60) / float(3600)) * (10**11)
-        # if dd < 0:
-        #     cdeg = cdeg * -1
-
         return cdeg, cmin, int(csec)
 
     try:
-        # return a six-tuple
-        # return {
-        #     1: b"N",
-        #     2: ((54, 1), (59, 1), (27627360, 1000000)),
-        #     3: b"W",
-        #     4: ((2, 1), (34, 1), (29780400, 1000000)),
-        #     5: 0,
-        #     6: (179, 1),
-        # }
         return {
             1: b"N" if dd1 >= 0 else b"S",
             2: (
-                (ToDMS(dd1, ndec)[0], 1),
-                (ToDMS(dd1, ndec)[1], 1),
-                (ToDMS(dd1, ndec)[2], 10**ndec),
+                (ToDMS(dd1)[0], 1),
+                (ToDMS(dd1)[1], 1),
+                (ToDMS(dd1)[2], 10**6),
             ),
             3: b"E" if dd2 >= 0 else b"W",
             4: (
-                (ToDMS(dd2, ndec)[0], 1),
-                (ToDMS(dd2, ndec)[1], 1),
-                (ToDMS(dd2, ndec)[2], 10**ndec),
+                (ToDMS(dd2)[0], 1),
+                (ToDMS(dd2)[1], 1),
+                (ToDMS(dd2)[2], 10**6),
             ),
             5: 0,
             6: (1, 1),

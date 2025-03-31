@@ -79,18 +79,7 @@ def set_exif_date(file_path: str, date: str, picture_manager: PictureManager):
 
 def set_exif_location(file_path: str, gps: dict, picture_manager: PictureManager):
     picture = picture_manager.get_image(file_path)
-    import ipdb
-
-    ipdb.set_trace()
     picture.exif_metadata["GPS"] = gps
-    # picture.exif_metadata["GPS"] = {
-    #     1: b"N",
-    #     2: ((54, 1), (59, 1), (27627360, 1000000)),
-    #     3: b"W",
-    #     4: ((2, 1), (34, 1), (29780400, 1000000)),
-    #     5: 0,
-    #     6: (179, 1),
-    # }
     exif_bytes = piexif.dump(picture.exif_metadata)
 
     picture_manager.save(picture, picture.path, "jpeg", exif=exif_bytes)
