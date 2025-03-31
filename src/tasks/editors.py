@@ -49,33 +49,36 @@ def guess_date_bin_from_full_path(path_as_list: List[str]):
     return date_bin
 
 
-def convert_dd_location_to_dms(dd):
-    dd1 = abs(float(dd))
-    cdeg = int(dd1)
-    minsec = dd1 - cdeg
-    cmin = int(minsec * 60)
-    csec = ((minsec % 60) / float(3600)) * (10**11)
-    return cdeg, cmin, int(csec)
+def convert_dd_location_to_dms(decimal_degrees: float, seconds_precision):
+    abs_decimal_degrees = abs(decimal_degrees)
+
+    dms_degrees = int(abs_decimal_degrees)
+    degrees_leftover = abs_decimal_degrees - dms_degrees
+    dms_minutes = int(degrees_leftover * 60)
+    minutes_leftover = degrees_leftover * 60 - dms_minutes
+    # import pdb
+
+    # pdb.set_trace()
+    # csec = ((minsec % 60) / float(3600)) * (10**11)
+    dms_seconds = int(minutes_leftover * 60 * seconds_precision)
+    return dms_degrees, dms_minutes, dms_seconds
 
 
 def convert_dd_pair_location_to_piexif_gps_dms(dd1: float, dd2: float) -> dict:
-    try:
-        float(dd1), float(dd2)
-    except:
-        raise Exception("Invalid input")
+    precision = 10**6
 
     return {
         1: b"N" if dd1 >= 0 else b"S",
         2: (
-            (convert_dd_location_to_dms(dd1)[0], 1),
-            (convert_dd_location_to_dms(dd1)[1], 1),
-            (convert_dd_location_to_dms(dd1)[2], 10**6),
+            (convert_dd_location_to_dms(dd1, precision)[0], 1),
+            (convert_dd_location_to_dms(dd1, precision)[1], 1),
+            (convert_dd_location_to_dms(dd1, precision)[2], precision),
         ),
         3: b"E" if dd2 >= 0 else b"W",
         4: (
-            (convert_dd_location_to_dms(dd2)[0], 1),
-            (convert_dd_location_to_dms(dd2)[1], 1),
-            (convert_dd_location_to_dms(dd2)[2], 10**6),
+            (convert_dd_location_to_dms(dd2, precision)[0], 1),
+            (convert_dd_location_to_dms(dd2, precision)[1], 1),
+            (convert_dd_location_to_dms(dd2, precision)[2], precision),
         ),
         5: 0,
         6: (1, 1),
