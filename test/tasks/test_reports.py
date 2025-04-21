@@ -3,136 +3,98 @@ from datetime import datetime
 import mock
 
 from tasks.reports import (
-    report_imgs_where_exif_date_not_in_path,
-    report_imgs_without_exif_date,
+    PictureMatcherByExifDateNotInPath,
+    PictureMatcherByMissingExifDate,
+    PictureMatcherByMissingExifLocation,
+    find_and_report_imgs,
 )
 
 
-def test_report_imgs_without_exif_date_nothing_found():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = []
+def test_find_and_report_imgs_with_a_match():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
 
-    result = report_imgs_without_exif_date("./test/files", pictureManagerMock)
+    mock_picture_manager = mock.Mock()
+    mock_picture_manager.find_images.return_value = [mock_picture]
 
-    assert list(result) == []
+    matcher = mock.Mock()
+    matcher.apply.return_value = True
 
+    result = list(find_and_report_imgs("dummy_path", matcher, mock_picture_manager))
 
-def test_report_imgs_without_exif_date_one_image_found():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = [
-        mock.MagicMock(datetime_taken=None, path="test1.jpg"),
-        mock.MagicMock(datetime_taken=datetime(2024, 4, 4, 14, 50), path="test2.jpg"),
-    ]
-
-    result = report_imgs_without_exif_date("./test/files", pictureManagerMock)
-
-    assert list(result) == [pictureManagerMock.find_images.return_value[0]]
+    assert len(result) == 1
+    assert result[0] == mock_picture
 
 
-def test_report_imgs_without_exif_date_no_matches():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = [
-        mock.MagicMock(datetime_taken=datetime(2024, 4, 8, 14, 50), path="test1.jpg"),
-        mock.MagicMock(datetime_taken=datetime(2024, 4, 4, 14, 50), path="test2.jpg"),
-    ]
+def test_find_and_report_imgs_without_a_match():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
 
-    result = report_imgs_without_exif_date("./test/files", pictureManagerMock)
+    mock_picture_manager = mock.Mock()
+    mock_picture_manager.find_images.return_value = [mock_picture]
 
-    assert list(result) == []
+    matcher = mock.Mock()
+    matcher.apply.return_value = False
 
+    result = list(find_and_report_imgs("dummy_path", matcher, mock_picture_manager))
 
-def test_report_imgs_where_path_date_not_in_exif_nothing_found():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = []
-
-    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
-
-    assert list(result) == []
+    assert len(result) == 0
 
 
-def test_report_imgs_where_path_date_not_in_exif_found_one_without_date():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = [
-        mock.MagicMock(
-            datetime_taken=None,
-            path="C:/imgs/2024/10/07/test1.jpg",
-            parent_folders_as_list=["C:", "imgs", "2024", "10", "07"],
-        ),
-        mock.MagicMock(
-            datetime_taken=None,
-            path="test2.jpg",
-            parent_folders_as_list=["test2"],
-        ),
-    ]
+def test_picture_matcher_by_exif_date_not_in_path_mathes():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
+    mock_picture.path = "/path/to/pics/2023/10. Oct/01. great day/pic.jpg"
 
-    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
-
-    assert list(result) == [pictureManagerMock.find_images.return_value[0]]
+    matcher = PictureMatcherByExifDateNotInPath()
+    assert matcher.apply(mock_picture) is False
 
 
-def test_report_imgs_where_path_date_not_in_exif_found_one_with_missing_only_day():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = [
-        mock.MagicMock(
-            datetime_taken=datetime(2024, 10, 7, 14, 50),
-            path="C:/imgs/2024/10/07/test1.jpg",
-            parent_folders_as_list=["C:", "imgs", "2024", "10", "07"],
-        ),
-        mock.MagicMock(
-            datetime_taken=None,
-            path="C:/imgs/2024/06/test2.jpg",
-            parent_folders_as_list=["C:", "imgs", "2024", "06"],
-        ),
-    ]
+def test_picture_matcher_by_exif_date_not_in_path_year_does_not_match():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
+    mock_picture.path = "/path/to/pics/2024/10. Oct/01. great day/pic.jpg"
 
-    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
-
-    assert list(result) == [pictureManagerMock.find_images.return_value[1]]
+    matcher = PictureMatcherByExifDateNotInPath()
+    assert matcher.apply(mock_picture) is True
 
 
-def test_report_imgs_where_path_date_not_in_exif_found_one_with_missing_day_and_month_name():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = [
-        mock.MagicMock(
-            datetime_taken=datetime(2024, 10, 7, 14, 50),
-            path="C:/imgs/2024/10/07/test1.jpg",
-            parent_folders_as_list=["C:", "imgs", "2024", "10", "07"],
-        ),
-        mock.MagicMock(
-            datetime_taken=None,
-            path="C:/imgs/2024/6. June/test2.jpg",
-            parent_folders_as_list=["C:", "imgs", "2024", "6. June"],
-        ),
-    ]
+def test_picture_matcher_by_exif_date_not_in_path_month_does_not_match():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
+    mock_picture.path = "/path/to/pics/2023/11. Nov/01. great day/pic.jpg"
 
-    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
-
-    assert list(result) == [pictureManagerMock.find_images.return_value[1]]
+    matcher = PictureMatcherByExifDateNotInPath()
+    assert matcher.apply(mock_picture) is True
 
 
-def test_report_imgs_where_path_date_and_exif_are_different():
-    pictureManagerMock = mock.MagicMock()
-    pictureManagerMock.find_images.return_value = [
-        mock.MagicMock(
-            datetime_taken=datetime(2024, 10, 7, 14, 50),
-            path="C:/imgs/2024/10/07/test1.jpg",
-            parent_folders_as_list=["C:", "imgs", "2024", "10", "07"],
-        ),
-        mock.MagicMock(
-            datetime_taken=datetime(2024, 6, 7, 14, 50),
-            path="C:/imgs/2023/6. June/test2.jpg",
-            parent_folders_as_list=["C:", "imgs", "2023", "6. June"],
-        ),
-        mock.MagicMock(
-            datetime_taken=datetime(2024, 6, 7, 14, 50),
-            path="C:/imgs/2024/5. May/test2.jpg",
-            parent_folders_as_list=["C:", "imgs", "2024", "5. May"],
-        ),
-    ]
+def test_picture_matcher_by_missing_exif_date():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = None
 
-    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
+    matcher = PictureMatcherByMissingExifDate()
+    assert matcher.apply(mock_picture) is True
 
-    assert list(result) == [
-        pictureManagerMock.find_images.return_value[1],
-        pictureManagerMock.find_images.return_value[2],
-    ]
+
+def test_picture_matcher_by_missing_exif_date_does_not_match():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
+
+    matcher = PictureMatcherByMissingExifDate()
+    assert matcher.apply(mock_picture) is False
+
+
+def test_picture_matcher_by_missing_exif_location_matches():
+    mock_picture = mock.Mock()
+    mock_picture.location = None
+
+    matcher = PictureMatcherByMissingExifLocation()
+    assert matcher.apply(mock_picture) is True
+
+
+def test_picture_matcher_by_missing_exif_location_does_not_match():
+    mock_picture = mock.Mock()
+    mock_picture.location = (10.0, 20.0)
+
+    matcher = PictureMatcherByMissingExifLocation()
+    assert matcher.apply(mock_picture) is False
