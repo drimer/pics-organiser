@@ -8,7 +8,7 @@ from tasks.editors import (
     set_exif_gps_location,
 )
 from tasks.reports import (
-    report_imgs_where_path_date_not_in_exif,
+    report_imgs_where_exif_date_not_in_path,
     report_imgs_without_exif_date,
     report_imgs_without_exif_location,
 )
@@ -38,10 +38,10 @@ def location_not_in_exif(dir_path):
         print(img)
 
 
-@report.command()
+@report.command("exif-date-not-in-path")
 @click.option("--dir-path", help="Path to the folder with the images")
-def date_not_in_path(dir_path):
-    for img in report_imgs_where_path_date_not_in_exif(dir_path, PictureManager()):
+def exif_date_not_in_path(dir_path):
+    for img in report_imgs_where_exif_date_not_in_path(dir_path, PictureManager()):
         print(img)
 
 

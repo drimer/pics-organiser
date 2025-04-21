@@ -3,7 +3,7 @@ from datetime import datetime
 import mock
 
 from tasks.reports import (
-    report_imgs_where_path_date_not_in_exif,
+    report_imgs_where_exif_date_not_in_path,
     report_imgs_without_exif_date,
 )
 
@@ -45,7 +45,7 @@ def test_report_imgs_where_path_date_not_in_exif_nothing_found():
     pictureManagerMock = mock.MagicMock()
     pictureManagerMock.find_images.return_value = []
 
-    result = report_imgs_where_path_date_not_in_exif("./test/files", pictureManagerMock)
+    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
 
     assert list(result) == []
 
@@ -65,7 +65,7 @@ def test_report_imgs_where_path_date_not_in_exif_found_one_without_date():
         ),
     ]
 
-    result = report_imgs_where_path_date_not_in_exif("./test/files", pictureManagerMock)
+    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
 
     assert list(result) == [pictureManagerMock.find_images.return_value[0]]
 
@@ -85,7 +85,7 @@ def test_report_imgs_where_path_date_not_in_exif_found_one_with_missing_only_day
         ),
     ]
 
-    result = report_imgs_where_path_date_not_in_exif("./test/files", pictureManagerMock)
+    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
 
     assert list(result) == [pictureManagerMock.find_images.return_value[1]]
 
@@ -105,7 +105,7 @@ def test_report_imgs_where_path_date_not_in_exif_found_one_with_missing_day_and_
         ),
     ]
 
-    result = report_imgs_where_path_date_not_in_exif("./test/files", pictureManagerMock)
+    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
 
     assert list(result) == [pictureManagerMock.find_images.return_value[1]]
 
@@ -130,7 +130,7 @@ def test_report_imgs_where_path_date_and_exif_are_different():
         ),
     ]
 
-    result = report_imgs_where_path_date_not_in_exif("./test/files", pictureManagerMock)
+    result = report_imgs_where_exif_date_not_in_path("./test/files", pictureManagerMock)
 
     assert list(result) == [
         pictureManagerMock.find_images.return_value[1],
