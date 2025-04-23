@@ -77,6 +77,15 @@ def test_picture_matcher_by_exif_date_not_in_path_allow_end_of_year_to_carry_ove
     assert matcher.apply(mock_picture) is False
 
 
+def test_picture_matcher_by_exif_date_not_in_path_allow_first_of_year_in_its_folder():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2024, 1, 1)
+    mock_picture.path = "/path/to/pics/2024/1. Jan/01. great day/pic.jpg"
+
+    matcher = PictureMatcherByExifDateNotInPath()
+    assert matcher.apply(mock_picture) is False
+
+
 def test_picture_matcher_by_missing_exif_date():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = None
