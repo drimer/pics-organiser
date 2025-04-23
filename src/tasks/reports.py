@@ -1,62 +1,65 @@
-from typing import Generator, List
+import abc
+from typing import Generator
 
 from files.manager import PictureManager
 from files.picture import Picture
 
 
+class PictureMatcher(abc.ABC):
+
+    @abc.abstractmethod
+    def apply(self, picture: Picture) -> bool:
+        pass
+
+
+class PictureMatcherByExifDateNotInPath(PictureMatcher):
+    def apply(self, picture: Picture) -> bool:
+        if picture.datetime_taken is None:
+            return False
+
+        if picture.datetime_taken.month == 1 and picture.datetime_taken.day == 1:
+            # Allow end of year to carry over to the next year
+            if (
+                str(picture.datetime_taken.year - 1) in picture.path
+                and "12" in picture.path
+            ):
+                return False
+
+        return (
+            str(picture.datetime_taken.year) not in picture.path
+            or str(picture.datetime_taken.month) not in picture.path
+        )
+
+
+class PictureMatcherByMissingExifDate(PictureMatcher):
+    def apply(self, picture: Picture) -> bool:
+        return picture.datetime_taken is None
+
+
+class PictureMatcherByMissingExifLocation(PictureMatcher):
+    def apply(self, picture: Picture) -> bool:
+        return picture.location is None
+
+
+def find_and_report_imgs(
+    path: str, matcher: PictureMatcher, picture_manager: PictureManager
+) -> Generator[Picture, None, None]:
+    for picture in picture_manager.find_images(path):
+        if matcher.apply(picture):
+            yield picture
+
+
 def report_imgs_without_exif_date(
     path: str, picture_manager: PictureManager
 ) -> Generator[Picture, None, None]:
-    pictures_collection = picture_manager.find_images(path)
-    for picture in pictures_collection:
-        if picture.datetime_taken is None:
-            yield picture
+    return find_and_report_imgs(
+        path, PictureMatcherByMissingExifDate(), picture_manager
+    )
 
 
 def report_imgs_without_exif_location(
     path: str, picture_manager: PictureManager
 ) -> Generator[Picture, None, None]:
-    pictures_collection = picture_manager.find_images(path)
-    for picture in pictures_collection:
-        if picture.location is None:
-            yield picture
-
-
-def report_imgs_where_path_date_not_in_exif(
-    path: str, picture_manager: PictureManager
-) -> List[Picture]:
-    images_without_date = []
-
-    for picture in picture_manager.find_images(path):
-        possible_year = next(
-            (
-                part
-                for part in picture.parent_folders_as_list
-                if part.isdigit() and len(part) == 4
-            ),
-            None,
-        )
-        possible_month = next(
-            (
-                part
-                for part in picture.parent_folders_as_list
-                if part.isdigit() and len(part) in (1, 2)
-            ),
-            None,
-        )
-        if not possible_month:
-            for part in picture.parent_folders_as_list:
-                try:
-                    possible_month = part.split(".")[0]
-                except:
-                    pass
-
-        if possible_year and possible_month:
-            if picture.datetime_taken is None:
-                images_without_date.append(picture)
-            elif str(picture.datetime_taken.year) != possible_year:
-                images_without_date.append(picture)
-            elif str(picture.datetime_taken.month) != possible_month:
-                images_without_date.append(picture)
-
-    return images_without_date
+    return find_and_report_imgs(
+        path, PictureMatcherByMissingExifLocation(), picture_manager
+    )
