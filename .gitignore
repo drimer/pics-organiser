@@ -1,7 +1,8 @@
-*~
+# Python
 *.pyc
-
-test_assets_sorted/
-
-.wsl-venv/
+*.egg-info
 .venv/
+
+# Pytest artifacts
+pytest.xml
+.coverage
