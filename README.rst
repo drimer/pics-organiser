@@ -3,19 +3,14 @@ Running the app
 
 .. code-block:: bash
 
-    $ pip install pyinstaller==2.1
-    $ pip install exifread
-    $ apt-get install python-wxgtk2.8
-    $ make compile
-
-Ensure this directory is in contained in $PYTHONPATH (export PYTHONPATH=.:$PYTHONPATH)
-
-.. code-block:: bash
-
-    $ python src/main.py
+    $ pipx install .
+    $ pics-org --help
 
 
-Most useful commands (most of them with Powershell syntax for path, and some with bash syntax):
+Most useful commands
+====================
+
+Most of these use Powershell syntax for path, and some with bash syntax):
 1. python src/main.py report no-exif-date --dir-path "C:/Users/drime/OneDrive/Pictures/Samsung Gallery/Fotos/"
 2. python src/main.py report no-exif-location --dir-path "C:/Users/drime/OneDrive/Pictures/Samsung Gallery/Fotos/"
 3. python src/main.py report exif-date-not-in-path --dir-path "C:/Users/drime/OneDrive/Pictures/Samsung Gallery/Fotos/"
