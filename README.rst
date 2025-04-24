@@ -46,6 +46,7 @@ Ensure you are using the right Python version:
 
 .. code-block:: bash
 
+    $ python -m pip install --user pipx
     $ pipx install . --editable
     $ pipx run pip install -r requirements-dev.txt
 
