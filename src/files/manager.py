@@ -35,7 +35,7 @@ class PictureManager:
             # it fails to open
             try:
                 Image.open(file_path)
-            except:
+            except Exception:
                 print(f"Something wrong with {file_path}")
                 continue
 

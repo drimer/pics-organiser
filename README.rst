@@ -7,6 +7,49 @@ Running the app
     $ pics-org --help
 
 
+Setting up development environment
+==================================
+
+Ensure you are using the right Python version:
+
+1. Install PyEnv: https://github.com/pyenv/pyenv or  https://github.com/pyenv-win/pyenv-win/
+
+2. Install the required Python version: 3.10.11 and ensure you activate it:
+
+.. code-block:: bash
+
+        $ pyenv local 3.10.11
+        $ python --version
+        Python 3.10.11
+
+3. Create a virtual environment:
+
+.. code-block:: bash
+
+    $ python -m venv .venv
+    $ .\.venv\Scripts\activate
+    $ pip install -r .\requirements-dev.txt
+
+4. Running unit tests:
+
+.. code-block:: bash
+
+    $ pytest
+
+5. Linting:
+
+.. code-block:: bash
+
+    $ flake8 src test
+
+6. Install the package into your system in editable mode:
+
+.. code-block:: bash
+
+    $ pipx install . --editable
+    $ pipx run pip install -r requirements-dev.txt
+
+
 Most useful commands
 ====================
 

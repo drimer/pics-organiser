@@ -34,7 +34,7 @@ class Picture(File):
         if "exif" in img.info:
             try:
                 self.__metadata = piexif.load(img.info["exif"])
-            except:
+            except Exception:
                 pass
 
     @property
@@ -45,9 +45,7 @@ class Picture(File):
     def datetime_taken(self):
         bin_datetime = self.exif_metadata["Exif"].get(piexif.ExifIFD.DateTimeOriginal)
         if bin_datetime:
-            return datetime.datetime.strptime(
-                bin_datetime.decode(), "%Y:%m:%d %H:%M:%S"
-            )
+            return datetime.datetime.strptime(bin_datetime.decode(), "%Y:%m:%d %H:%M:%S")
 
     @datetime_taken.setter
     def datetime_taken(self, value):
