@@ -1,7 +1,6 @@
+import datetime
 import os
 import shutil
-import datetime
-import sys
 
 
 class File:
@@ -21,12 +20,10 @@ class File:
     @property
     def abspath(self):
         return os.path.abspath(self.path)
-    
+
     @property
     def parent_folders_as_list(self):
-        return list(
-            filter(lambda x: x, os.path.dirname(self.path).split(os.path.sep))
-        )
+        return list(filter(lambda x: x, os.path.dirname(self.path).split(os.path.sep)))
 
     @property
     def size(self):
