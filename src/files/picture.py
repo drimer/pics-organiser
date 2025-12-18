@@ -1,6 +1,7 @@
 import datetime
 import os.path
 from collections import defaultdict
+from dataclasses import dataclass
 
 import piexif
 from PIL import Image
@@ -18,6 +19,16 @@ def get_path_as_list(path: str) -> list:
 
 class InvalidFileType(Exception):
     pass
+
+
+@dataclass
+class ExifGpsLocation:
+    lat: tuple
+    lat_ref: str
+    lon: tuple
+    lon_ref: str
+    alt: tuple
+    alt_ref: int
 
 
 class Picture(File):
@@ -45,14 +56,16 @@ class Picture(File):
     def datetime_taken(self):
         bin_datetime = self.exif_metadata["Exif"].get(piexif.ExifIFD.DateTimeOriginal)
         if bin_datetime:
-            return datetime.datetime.strptime(bin_datetime.decode(), "%Y:%m:%d %H:%M:%S")
+            return datetime.datetime.strptime(
+                bin_datetime.decode(), "%Y:%m:%d %H:%M:%S"
+            )
 
     @datetime_taken.setter
     def datetime_taken(self, value):
         self.exif_metadata["Exif"][piexif.ExifIFD.DateTimeOriginal] = value
 
     @property
-    def location(self):
+    def location(self) -> ExifGpsLocation:
         gps = self.exif_metadata["GPS"]
         if not gps:
             return None
@@ -67,7 +80,12 @@ class Picture(File):
         if not lat_ref or not lon_ref:
             return None
 
-        return lat, lat_ref, lon, lon_ref
+        alt = gps.get(piexif.GPSIFD.GPSAltitude)
+        alt_ref = gps.get(piexif.GPSIFD.GPSAltitudeRef)
+
+        return ExifGpsLocation(
+            lat=lat, lat_ref=lat_ref, lon=lon, lon_ref=lon_ref, alt=alt, alt_ref=alt_ref
+        )
 
     @location.setter
     def location(self, value):

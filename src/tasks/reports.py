@@ -38,7 +38,14 @@ class PictureMatcherByMissingExifDate(PictureMatcher):
 
 class PictureMatcherByMissingExifLocation(PictureMatcher):
     def apply(self, picture: Picture) -> bool:
-        return picture.location is None
+        if picture.location is None:
+            return True
+        elif picture.location.alt == (1, 1) and picture.location.alt_ref == 0:
+            # I ran the script to set EXIF GPS with these values, but they aren't picked up
+            # by Android's Photo app. So I need these included in the report.
+            return True
+
+        return False
 
 
 def find_and_report_imgs(
