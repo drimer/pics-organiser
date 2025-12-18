@@ -81,7 +81,7 @@ def convert_dd_pair_location_to_piexif_gps_dms(dd1: float, dd2: float) -> dict:
             (convert_dd_location_to_dms(dd2, precision)[2], precision),
         ),
         5: 0,
-        6: (1, 1),
+        6: (0, 0),
     }
 
 

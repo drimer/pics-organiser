@@ -2,6 +2,7 @@ from datetime import datetime
 
 import mock
 
+from files.picture import ExifGpsLocation
 from tasks.reports import (
     PictureMatcherByExifDateNotInPath,
     PictureMatcherByMissingExifDate,
@@ -112,7 +113,19 @@ def test_picture_matcher_by_missing_exif_location_matches():
 
 def test_picture_matcher_by_missing_exif_location_does_not_match():
     mock_picture = mock.Mock()
-    mock_picture.location = (10.0, 20.0)
+    mock_picture.location = ExifGpsLocation(
+        lat=12.345, lat_ref="N", lon=6.789, lon_ref="W", alt=0, alt_ref=(0, 0)
+    )
 
     matcher = PictureMatcherByMissingExifLocation()
     assert matcher.apply(mock_picture) is False
+
+
+def test_picture_matcher_by_missing_exif_location_matches_broken_data():
+    mock_picture = mock.Mock()
+    mock_picture.location = ExifGpsLocation(
+        lat=12.345, lat_ref="N", lon=6.789, lon_ref="W", alt=(1, 1), alt_ref=0
+    )
+
+    matcher = PictureMatcherByMissingExifLocation()
+    assert matcher.apply(mock_picture) is True
