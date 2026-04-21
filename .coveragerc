@@ -1,0 +1,4 @@
+[run]
+omit =
+	src/cli.py
+    src/main.py
