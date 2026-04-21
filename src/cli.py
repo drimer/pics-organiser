@@ -30,7 +30,7 @@ def report():
 @click.option("--dir-path", help="Path to the folder with the images")
 def date_not_in_exif(dir_path):
     for img in find_and_report_imgs(
-        dir_path, PictureMatcherByMissingExifDate(), PictureManager()
+        dir_path, (PictureMatcherByMissingExifDate(),), PictureManager()
     ):
         print(img)
 
