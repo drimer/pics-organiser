@@ -9,6 +9,7 @@ from tasks.editors import (
 )
 from tasks.reports import (
     PictureMatcherByExifDateNotInPath,
+    PictureMatcherByExifDateNotInWhatsappFileName,
     PictureMatcherByMissingExifDate,
     find_and_report_imgs,
     report_imgs_without_exif_location,
@@ -45,7 +46,7 @@ def location_not_in_exif(dir_path):
 @click.option("--dir-path", help="Path to the folder with the images")
 def exif_date_not_in_path(dir_path):
     for img in find_and_report_imgs(
-        dir_path, PictureMatcherByExifDateNotInPath(), PictureManager()
+        dir_path, (PictureMatcherByExifDateNotInPath(), PictureMatcherByExifDateNotInWhatsappFileName()), PictureManager()
     ):
         print(img)
 

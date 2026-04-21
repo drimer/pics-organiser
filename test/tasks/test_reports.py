@@ -5,6 +5,7 @@ import mock
 from files.picture import ExifGpsLocation
 from tasks.reports import (
     PictureMatcherByExifDateNotInPath,
+    PictureMatcherByExifDateNotInWhatsappFileName,
     PictureMatcherByMissingExifDate,
     PictureMatcherByMissingExifLocation,
     find_and_report_imgs,
@@ -21,7 +22,7 @@ def test_find_and_report_imgs_with_a_match():
     matcher = mock.Mock()
     matcher.apply.return_value = True
 
-    result = list(find_and_report_imgs("dummy_path", matcher, mock_picture_manager))
+    result = list(find_and_report_imgs("dummy_path", (matcher,), mock_picture_manager))
 
     assert len(result) == 1
     assert result[0] == mock_picture
@@ -37,7 +38,7 @@ def test_find_and_report_imgs_without_a_match():
     matcher = mock.Mock()
     matcher.apply.return_value = False
 
-    result = list(find_and_report_imgs("dummy_path", matcher, mock_picture_manager))
+    result = list(find_and_report_imgs("dummy_path", (matcher,), mock_picture_manager))
 
     assert len(result) == 0
 
@@ -128,4 +129,40 @@ def test_picture_matcher_by_missing_exif_location_matches_broken_data():
     )
 
     matcher = PictureMatcherByMissingExifLocation()
+    assert matcher.apply(mock_picture) is True
+    
+
+def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_matches():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
+    mock_picture.filename = "IMG-20231001-WA0000.jpg"
+
+    matcher = PictureMatcherByExifDateNotInWhatsappFileName()
+    assert matcher.apply(mock_picture) is False
+
+
+def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_does_not_match():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 1)
+    mock_picture.filename = "IMG-20231001-WA0000.jpg"
+
+    matcher = PictureMatcherByExifDateNotInWhatsappFileName()
+    assert matcher.apply(mock_picture) is False
+    
+    
+def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_does_not_match_five_days_in_past():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 27)
+    mock_picture.filename = "IMG-20231101-WA0000.jpg"
+
+    matcher = PictureMatcherByExifDateNotInWhatsappFileName()
+    assert matcher.apply(mock_picture) is False
+    
+    
+def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_matches_six_days_in_past():
+    mock_picture = mock.Mock()
+    mock_picture.datetime_taken = datetime(2023, 10, 26)
+    mock_picture.filename = "IMG-20231101-WA0000.jpg"
+
+    matcher = PictureMatcherByExifDateNotInWhatsappFileName()
     assert matcher.apply(mock_picture) is True
