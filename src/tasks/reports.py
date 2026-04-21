@@ -30,27 +30,32 @@ class PictureMatcherByExifDateNotInPath(PictureMatcher):
             str(picture.datetime_taken.year) not in picture.path
             or str(picture.datetime_taken.month) not in picture.path
         )
-        
+
 
 class PictureMatcherByExifDateNotInWhatsappFileName(PictureMatcher):
     NUMBER_OF_DAYS_WHATSAPP_FILE_NAME_CAN_BE_OFF = 5
-    
+
     def apply(self, picture: Picture) -> bool:
         if picture.datetime_taken is None:
             return False
-        
+
         example_length = len("IMG-20220101-WA0000.jpg")
-        if len(picture.filename) != example_length or not picture.filename.startswith("IMG-") or '-WA' not in picture.filename:
+        if len(picture.filename) != example_length:
             return False
-        
+
+        if not picture.filename.startswith("IMG-") or '-WA' not in picture.filename:
+            return False
+
         # Allow a time window for WhatsApp file names, as people sometimes forget to share the picture immediately,
         # and the file name is generated when the picture is shared.
         filename_date = datetime.strptime(picture.filename[4:12], "%Y%m%d")
         date_difference = abs((picture.datetime_taken - filename_date).days)
         if date_difference <= self.NUMBER_OF_DAYS_WHATSAPP_FILE_NAME_CAN_BE_OFF:
             return False
-        
-        start_filename = f"IMG-{picture.datetime_taken.year}{picture.datetime_taken.month:02d}{picture.datetime_taken.day:02d}"
+
+        start_filename = (
+            f"IMG-{picture.datetime_taken.year}{picture.datetime_taken.month:02d}{picture.datetime_taken.day:02d}"
+        )
         return not picture.filename.startswith(start_filename)
 
 

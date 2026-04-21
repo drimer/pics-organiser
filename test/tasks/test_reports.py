@@ -130,7 +130,7 @@ def test_picture_matcher_by_missing_exif_location_matches_broken_data():
 
     matcher = PictureMatcherByMissingExifLocation()
     assert matcher.apply(mock_picture) is True
-    
+
 
 def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_matches():
     mock_picture = mock.Mock()
@@ -148,8 +148,8 @@ def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_does_not_match()
 
     matcher = PictureMatcherByExifDateNotInWhatsappFileName()
     assert matcher.apply(mock_picture) is False
-    
-    
+
+
 def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_does_not_match_five_days_in_past():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 27)
@@ -157,8 +157,8 @@ def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_does_not_match_f
 
     matcher = PictureMatcherByExifDateNotInWhatsappFileName()
     assert matcher.apply(mock_picture) is False
-    
-    
+
+
 def test_picture_matcher_by_exif_date_not_in_whatsapp_file_name_matches_six_days_in_past():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 26)
