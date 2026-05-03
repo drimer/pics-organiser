@@ -26,7 +26,7 @@ def guess_date_using_year_month_day_pattern(path_as_list: List[str]):
             return None
 
         return f"{year_dir_name}:{month_str}:{day_str}"
-    except:
+    except (ValueError, IndexError):
         return None
 
 
@@ -42,7 +42,7 @@ def guess_date_using_year_month_pattern(path_as_list: List[str]):
             return None
 
         return f"{year_dir_name}:{month_str}:15"
-    except:
+    except (ValueError, IndexError):
         return None
 
 
@@ -55,7 +55,7 @@ def guess_date_bin_from_whatsapp_file(path_as_list: List[str]):
         date_str = filename[4:12]
         date_bin = f"{date_str[:4]}:{date_str[4:6]}:{date_str[6:]}"
         return date_bin
-    except:
+    except (ValueError, IndexError):
         return None
 
 
@@ -107,13 +107,16 @@ def convert_dd_pair_location_to_piexif_gps_dms(dd1: float, dd2: float) -> dict:
 
 
 def set_exif_date_from_path(
-    path: str, picture_manager: PictureManager
+    overwrite: bool, path: str, picture_manager: PictureManager
 ) -> Generator[tuple, None, None]:
     print(f"===> Setting dates from path {path}")
 
     for picture in picture_manager.find_images(path):
-        # Do not overwrite existing date
-        if picture.exif_metadata["Exif"].get(piexif.ExifIFD.DateTimeOriginal):
+        # Do not overwrite existing date if not explicitly allowed
+        if (
+            picture.exif_metadata["Exif"].get(piexif.ExifIFD.DateTimeOriginal)
+            and not overwrite
+        ):
             continue
 
         date_bin = guess_date_bin_from_full_path(get_path_as_list(picture.path))

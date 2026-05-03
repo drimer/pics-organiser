@@ -47,8 +47,11 @@ def location_not_in_exif(dir_path):
 def exif_date_not_in_path(dir_path):
     for img in find_and_report_imgs(
         dir_path,
-        (PictureMatcherByExifDateNotInPath(), PictureMatcherByExifDateNotInWhatsappFileName()),
-        PictureManager()
+        (
+            PictureMatcherByExifDateNotInPath(),
+            PictureMatcherByExifDateNotInWhatsappFileName(),
+        ),
+        PictureManager(),
     ):
         print(img)
 
@@ -59,9 +62,15 @@ def edit():
 
 
 @edit.command()
+@click.option(
+    "--overwrite",
+    is_flag=True,
+    default=False,
+    help="Whether to overwrite existing EXIF date",
+)
 @click.option("--dir-path", help="Path to the folder with the images")
-def set_exif_date_to_best_guess(dir_path):
-    files_changed = set_exif_date_from_path(dir_path, PictureManager())
+def set_exif_date_to_best_guess(overwrite, dir_path):
+    files_changed = set_exif_date_from_path(overwrite, dir_path, PictureManager())
     for file_changed in files_changed:
         print(f"File {file_changed[0]} got changed to {file_changed[1]}")
 
