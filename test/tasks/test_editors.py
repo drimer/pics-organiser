@@ -1,6 +1,7 @@
 from tasks.editors import (
     convert_dd_location_to_dms,
     convert_dd_pair_location_to_piexif_gps_dms,
+    guess_date_bin_from_full_path,
 )
 
 
@@ -51,3 +52,44 @@ def test_convert_dd_pair_location_to_piexif_gps_dms_happy_path_south_west():
         5: 0,
         6: (0, 0),
     }
+
+
+def test_guess_date_bin_from_full_path_happy_path_for_year_month_day():
+    assert (
+        guess_date_bin_from_full_path(
+            ["2023", "10. October", "1. Vienna trip", "IMG_1234.jpg"]
+        )
+        == b"2023:10:01 12:34:56"
+    )
+
+
+def test_guess_date_bin_from_full_path_happy_path_for_year_month():
+    assert (
+        guess_date_bin_from_full_path(["2023", "10. October", "IMG_1234.jpg"])
+        == b"2023:10:15 12:34:56"
+    )
+
+
+def test_guess_date_bin_from_full_path_happy_path_for_whatsapp_file():
+    assert (
+        guess_date_bin_from_full_path(
+            ["family pics", "cousins", "IMG-20130803-WA0006.jpg"]
+        )
+        == b"2013:08:03 12:34:56"
+    )
+
+
+def test_guess_date_bin_from_full_path_happy_path_for_whatsapp_file_in_year_month_day():
+    assert (
+        guess_date_bin_from_full_path(
+            ["2023", "10. October", "1. Vienna trip", "IMG-20231001-WA0006.jpg"]
+        )
+        == b"2023:10:01 12:34:56"
+    )
+
+
+def test_guess_date_bin_from_full_path_no_date_in_path():
+    assert (
+        guess_date_bin_from_full_path(["family pics", "cousins", "IMG_1234.jpg"])
+        is None
+    )
