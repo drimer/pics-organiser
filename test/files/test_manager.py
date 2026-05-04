@@ -12,18 +12,33 @@ def test_find_images_finds_only_pics():
     finder = PictureManager()
     pics_found = list(finder.find_images(TEST_ASSETS_ABS_PATH))
 
-    assert len(pics_found) == 9
-    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "DSC00316.JPG")) in pics_found
-    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "DSC00325.JPG")) in pics_found
-    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "DSC00470.JPG")) in pics_found
-    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "DSC01051.JPG")) in pics_found
-    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "DSC02228.JPG")) in pics_found
-    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "loaded_chips.jpg")) in pics_found
-    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "pexels-zoorg.jpg")) in pics_found
-    assert (
-        Picture(os.path.join(TEST_ASSETS_ABS_PATH, "more", "DSC0001.JPG")) in pics_found
+    expected_picuture_paths = (
+        os.path.join(TEST_ASSETS_ABS_PATH, "DSC00316.JPG"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "DSC00325.JPG"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "DSC00470.JPG"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "DSC01051.JPG"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "DSC02228.JPG"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "IMG-20161121-WA0001.jpg"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "loaded_chips.jpg"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "pexels-zoorg.jpg"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "more", "DSC0001.JPG"),
+        os.path.join(TEST_ASSETS_ABS_PATH, "more", "DSC02228.JPG"),
+        os.path.join(
+            TEST_ASSETS_ABS_PATH,
+            "2020",
+            "5. May",
+            "4. birthday",
+            "IMG-20161121-WA0001.jpg",
+        ),
+        os.path.join(
+            TEST_ASSETS_ABS_PATH,
+            "2020",
+            "5. May",
+            "4. birthday",
+            "IMG-20210920-WA0001.jpg",
+        ),
     )
-    assert (
-        Picture(os.path.join(TEST_ASSETS_ABS_PATH, "more", "DSC02228.JPG"))
-        in pics_found
-    )
+    assert len(pics_found) == len(expected_picuture_paths)
+
+    for expected_picuture_path in expected_picuture_paths:
+        assert Picture(expected_picuture_path) in pics_found
