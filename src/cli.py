@@ -4,7 +4,7 @@ from files.manager import PictureManager
 from tasks.editors import (
     convert_dd_pair_location_to_piexif_gps_dms,
     set_exif_date,
-    set_exif_date_from_path,
+    set_exif_date_to_best_guess,
     set_exif_gps_location,
 )
 from tasks.reports import (
@@ -61,18 +61,19 @@ def edit():
     pass
 
 
-@edit.command()
+@edit.command("set-exif-date-to-best-guess")
 @click.option(
     "--overwrite",
     is_flag=True,
     default=False,
     help="Whether to overwrite existing EXIF date",
 )
-@click.option("--dir-path", help="Path to the folder with the images")
-def set_exif_date_to_best_guess(overwrite, dir_path):
-    files_changed = set_exif_date_from_path(overwrite, dir_path, PictureManager())
-    for file_changed in files_changed:
-        print(f"File {file_changed[0]} got changed to {file_changed[1]}")
+@click.argument("paths", nargs=-1)
+def set_exif_date_to_best_guess_cli(overwrite, paths):
+    for path in paths:
+        files_changed = set_exif_date_to_best_guess(overwrite, path, PictureManager())
+        for file_changed in files_changed:
+            print(f"File {file_changed[0]} got changed to {file_changed[1]}")
 
 
 @edit.command("set-exif-date")

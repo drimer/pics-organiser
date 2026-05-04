@@ -106,7 +106,7 @@ def convert_dd_pair_location_to_piexif_gps_dms(dd1: float, dd2: float) -> dict:
     }
 
 
-def set_exif_date_from_path(
+def set_exif_date_to_best_guess(
     overwrite: bool, path: str, picture_manager: PictureManager
 ) -> Generator[tuple, None, None]:
     print(f"===> Setting dates from path {path}")

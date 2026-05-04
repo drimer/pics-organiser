@@ -7,23 +7,12 @@ from PIL import Image
 from files.picture import Picture, is_image_file
 
 
-class PictureFinder(object):
-
-    def __init__(self, path):
-        assert os.path.isdir(path)
-
-        self.path = path
-
-    def find_all(self):
-        for root, _, files in os.walk(self.path):
-            for filename in files:
-                abs_path = os.path.join(root, filename)
-                if is_image_file(abs_path):
-                    yield Picture(abs_path)
-
-
 class PictureManager:
     def find_images(self, path) -> Generator[Picture, None, None]:
+        if is_image_file(path):
+            yield Picture(path)
+            return
+
         paths_list = glob.iglob(f"{path}/**/*", recursive=True)
         files_list = (path for path in paths_list if os.path.isfile(path))
 

@@ -42,3 +42,13 @@ def test_find_images_finds_only_pics():
 
     for expected_picuture_path in expected_picuture_paths:
         assert Picture(expected_picuture_path) in pics_found
+
+
+def test_find_images_returns_image_when_path_is_image():
+    finder = PictureManager()
+    pics_found = list(
+        finder.find_images(os.path.join(TEST_ASSETS_ABS_PATH, "DSC00316.JPG"))
+    )
+
+    assert len(pics_found) == 1
+    assert Picture(os.path.join(TEST_ASSETS_ABS_PATH, "DSC00316.JPG")) in pics_found
