@@ -1,11 +1,10 @@
 import click
 
+from exif_info.guessers import ExifInfoGuesser
 from files.manager import PictureManager
 from tasks.editors import (
-    convert_dd_pair_location_to_piexif_gps_dms,
     set_exif_date,
     set_exif_date_to_best_guess,
-    set_exif_gps_location,
 )
 from tasks.reports import (
     PictureReporter,
@@ -87,7 +86,9 @@ def edit():
 @click.argument("paths", nargs=-1)
 def set_exif_date_to_best_guess_cli(overwrite, paths):
     for path in paths:
-        files_changed = set_exif_date_to_best_guess(overwrite, path, PictureManager())
+        files_changed = set_exif_date_to_best_guess(
+            overwrite, path, PictureManager(), ExifInfoGuesser()
+        )
         for file_changed in files_changed:
             print(f"File {file_changed[0]} got changed to {file_changed[1]}")
 
@@ -98,14 +99,3 @@ def set_exif_date_to_best_guess_cli(overwrite, paths):
 def set_exif_date_cli(date, file_paths):
     for file_path in file_paths:
         set_exif_date(file_path, date, PictureManager())
-
-
-@edit.command("set-exif-location")
-@click.argument("location", nargs=2)
-@click.argument("file_paths", nargs=-1)
-def set_exif_location_cli(location, file_paths):
-    location_as_dms = convert_dd_pair_location_to_piexif_gps_dms(
-        float(location[0]), float(location[1])
-    )
-    for file_path in file_paths:
-        set_exif_gps_location(file_path, location_as_dms, PictureManager())

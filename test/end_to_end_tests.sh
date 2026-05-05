@@ -46,21 +46,6 @@ fi
 git checkout HEAD -- test_assets/DSC00316.JPG
 
 
-# Tests for command: edit set-exif-location command
-
-echo "Test 'pics-org edit set-exif-location' happy path"
-pics-org edit set-exif-location -- 54.991008 -2.574939 ./test_assets/DSC00316.JPG
-changed_files=$(git diff --name-only test_assets)
-if [ "$changed_files" == "test_assets/DSC00316.JPG" ]; then
-    echo "Test passed: Only the expected file was changed."
-else
-    echo "Test failed: Unexpected files were changed:"
-    echo "$changed_files"
-    exit 1
-fi
-git checkout HEAD -- test_assets/DSC00316.JPG
-
-
 # Tests for command: edit set-exif-date-to-best-guess command
 
 echo "Test 'pics-org edit set-exif-date-to-best-guess' with overwrite happy path"
