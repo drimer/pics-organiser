@@ -10,25 +10,25 @@ git checkout HEAD -- test_assets
 # Tests for command: report no-exif-date command
 
 echo "Test 'pics-org report no-exif-date' happy path"
-pics-org report no-exif-date --dir-path ./test_assets
+pics-org report no-exif-date ./test_assets
 
 
 # Tests for command: report no-exif-location command
 
 echo "Test 'pics-org report no-exif-location' happy path"
-pics-org report no-exif-location --dir-path ./test_assets
+pics-org report no-exif-location ./test_assets
 
 
 # Tests for command: report exif-date-not-in-path command
 
 echo "Test 'pics-org report exif-date-not-in-path' happy path"
-pics-org report exif-date-not-in-path --dir-path ./test_assets
+pics-org report exif-date-not-in-path ./test_assets
 
 
 # Tests for command: report all
 
 echo "Test 'pics-org report all' happy path"
-pics-org report all --dir-path ./test_assets
+pics-org report all ./test_assets
 
 
 # Tests for command: edit set-exif-date command
