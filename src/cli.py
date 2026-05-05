@@ -82,6 +82,7 @@ def edit():
 def set_exif_date_cli(date, file_paths):
     for file_path in file_paths:
         set_exif_date(file_path, date, PictureManager())
+        print(f"File {file_path} got changed to {date}")
 
 
 @edit.command("set-exif-date-to-best-guess")
