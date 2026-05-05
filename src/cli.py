@@ -8,11 +8,12 @@ from tasks.editors import (
     set_exif_gps_location,
 )
 from tasks.reports import (
-    PictureMatcherByExifDateNotInPath,
-    PictureMatcherByExifDateNotInWhatsappFileName,
-    PictureMatcherByMissingExifDate,
+    PictureReporter,
+    PictureReporterByExifDateNotInPath,
+    PictureReporterByExifDateNotInWhatsappFileName,
+    PictureReporterByMissingExifDate,
+    PictureReporterByMissingExifLocation,
     find_and_report_imgs,
-    report_imgs_without_exif_location,
 )
 
 
@@ -29,31 +30,46 @@ def report():
 @report.command("no-exif-date")
 @click.option("--dir-path", help="Path to the folder with the images")
 def date_not_in_exif(dir_path):
-    for img in find_and_report_imgs(
-        dir_path, (PictureMatcherByMissingExifDate(),), PictureManager()
+    for result in find_and_report_imgs(
+        dir_path, (PictureReporterByMissingExifDate(),), PictureManager()
     ):
-        print(img)
+        print(f"{result[0]} - {result[1].description}")
 
 
 @report.command("no-exif-location")
 @click.option("--dir-path", help="Path to the folder with the images")
 def location_not_in_exif(dir_path):
-    for img in report_imgs_without_exif_location(dir_path, PictureManager()):
-        print(img)
+    for result in find_and_report_imgs(
+        dir_path, (PictureReporterByMissingExifLocation(),), PictureManager()
+    ):
+        print(f"{result[0]} - {result[1].description}")
 
 
 @report.command("exif-date-not-in-path")
 @click.option("--dir-path", help="Path to the folder with the images")
 def exif_date_not_in_path(dir_path):
-    for img in find_and_report_imgs(
+    for result in find_and_report_imgs(
         dir_path,
         (
-            PictureMatcherByExifDateNotInPath(),
-            PictureMatcherByExifDateNotInWhatsappFileName(),
+            PictureReporterByExifDateNotInPath(),
+            PictureReporterByExifDateNotInWhatsappFileName(),
         ),
         PictureManager(),
     ):
-        print(img)
+        print(f"{result[0]} - {result[1].description}")
+
+
+@report.command("all")
+@click.option("--dir-path", help="Path to the folder with the images")
+def report_all(dir_path):
+    all_reporters_cls = PictureReporter.__subclasses__()
+
+    for result in find_and_report_imgs(
+        dir_path,
+        [reporter_cls() for reporter_cls in all_reporters_cls],
+        PictureManager(),
+    ):
+        print(f"{result[0]} - {result[1].description}")
 
 
 @cli.group()
