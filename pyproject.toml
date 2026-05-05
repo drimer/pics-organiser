@@ -5,10 +5,33 @@ description = "A CLI application that helps organise albums of pictures."
 readme = "README.rst"
 authors = [{ name = "Alberto Aguilera" }]
 requires-python = ">= 3.10"
-dynamic = ["dependencies"]
+dependencies = [
+    "click==8.1.7",
+    "piexif==1.1.3",
+    "pillow==11.0.0",
+]
 
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+[dependency-groups]
+dev = [
+    {include-group = "lint"},
+    {include-group = "test"},
+]
+test = [
+    "mock==5.1.0",
+    "pytest==8.3.3",
+    "pytest-cov==6.1.1",
+]
+lint = [
+    "flake8==7.2.0",
+    "flake8-pyproject==1.2.3",
+]
+
+[project.optional-dependencies]
+debug = ["ipdb==0.13.13"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [project.scripts]
 pics-org = "cli:cli"
