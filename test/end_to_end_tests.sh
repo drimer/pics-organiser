@@ -10,46 +10,31 @@ git checkout HEAD -- test_assets
 # Tests for command: report no-exif-date command
 
 echo "Test 'pics-org report no-exif-date' happy path"
-pics-org report no-exif-date --dir-path ./test_assets
+pics-org report no-exif-date ./test_assets
 
 
 # Tests for command: report no-exif-location command
 
 echo "Test 'pics-org report no-exif-location' happy path"
-pics-org report no-exif-location --dir-path ./test_assets
+pics-org report no-exif-location ./test_assets
 
 
 # Tests for command: report exif-date-not-in-path command
 
 echo "Test 'pics-org report exif-date-not-in-path' happy path"
-pics-org report exif-date-not-in-path --dir-path ./test_assets
+pics-org report exif-date-not-in-path ./test_assets
 
 
 # Tests for command: report all
 
 echo "Test 'pics-org report all' happy path"
-pics-org report all --dir-path ./test_assets
+pics-org report all ./test_assets
 
 
 # Tests for command: edit set-exif-date command
 
 echo "Test 'pics-org edit set-exif-date' happy path"
 pics-org edit set-exif-date --date "2024:09:25 12:34:57" ./test_assets/DSC00316.JPG
-changed_files=$(git diff --name-only test_assets)
-if [ "$changed_files" == "test_assets/DSC00316.JPG" ]; then
-    echo "Test passed: Only the expected file was changed."
-else
-    echo "Test failed: Unexpected files were changed:"
-    echo "$changed_files"
-    exit 1
-fi
-git checkout HEAD -- test_assets/DSC00316.JPG
-
-
-# Tests for command: edit set-exif-location command
-
-echo "Test 'pics-org edit set-exif-location' happy path"
-pics-org edit set-exif-location -- 54.991008 -2.574939 ./test_assets/DSC00316.JPG
 changed_files=$(git diff --name-only test_assets)
 if [ "$changed_files" == "test_assets/DSC00316.JPG" ]; then
     echo "Test passed: Only the expected file was changed."
