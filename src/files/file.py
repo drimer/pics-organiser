@@ -22,6 +22,10 @@ class File:
         return os.path.abspath(self.path)
 
     @property
+    def dirname(self):
+        return os.path.dirname(self.path)
+
+    @property
     def parent_folders_as_list(self):
         return list(filter(lambda x: x, os.path.dirname(self.path).split(os.path.sep)))
 
