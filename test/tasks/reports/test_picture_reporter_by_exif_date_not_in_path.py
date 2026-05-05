@@ -8,7 +8,7 @@ from tasks.reports import (
 )
 
 
-def test_picture_matcher_by_exif_date_not_in_path_mathes():
+def test_that_is_reported_when_exif_date_not_in_path():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 1)
     mock_picture.dirname = "/path/to/pics/2024/10. Oct/01. great day"
@@ -18,7 +18,7 @@ def test_picture_matcher_by_exif_date_not_in_path_mathes():
     assert matcher.should_report(mock_picture) is True
 
 
-def test_picture_matcher_by_exif_date_not_in_path_year_does_not_match():
+def test_that_is_reported_when_year_does_not_match():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 1)
     mock_picture.dirname = "/path/to/pics/2024/10. Oct/01. great day"
@@ -28,7 +28,7 @@ def test_picture_matcher_by_exif_date_not_in_path_year_does_not_match():
     assert matcher.should_report(mock_picture) is True
 
 
-def test_picture_matcher_by_exif_date_not_in_path_month_does_not_match():
+def test_that_is_reported_when_month_does_not_match():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 1)
     mock_picture.dirname = "/path/to/pics/2023/11. Nov/01. great day"
@@ -38,7 +38,7 @@ def test_picture_matcher_by_exif_date_not_in_path_month_does_not_match():
     assert matcher.should_report(mock_picture) is True
 
 
-def test_picture_matcher_by_exif_date_not_in_path_allow_end_of_year_to_carry_over():
+def test_that_allows_end_of_year_to_carry_over():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2024, 1, 1)
     mock_picture.dirname = "/path/to/pics/2023/12. Dec/01. great day"
@@ -48,7 +48,7 @@ def test_picture_matcher_by_exif_date_not_in_path_allow_end_of_year_to_carry_ove
     assert matcher.should_report(mock_picture) is False
 
 
-def test_picture_matcher_by_exif_date_not_in_path_allow_first_of_year_in_its_folder():
+def test_that_allows_first_of_year_in_its_folder():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2024, 1, 1)
     mock_picture.dirname = "/path/to/pics/2024/1. Jan/01. great day"
@@ -58,7 +58,7 @@ def test_picture_matcher_by_exif_date_not_in_path_allow_first_of_year_in_its_fol
     assert matcher.should_report(mock_picture) is False
 
 
-def test_picture_matcher_by_exif_date_not_in_path_incorrect_month_folder_matches():
+def test_that_is_reported_when_month_in_folder_does_not_match():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 2)
     mock_picture.dirname = "/path/to/pics/2023/11. Nov/01. great day"
@@ -68,7 +68,7 @@ def test_picture_matcher_by_exif_date_not_in_path_incorrect_month_folder_matches
     assert matcher.should_report(mock_picture) is True
 
 
-def test_picture_matcher_by_exif_date_not_in_path_ignores_year_in_filename():
+def test_that_is_reported_when_year_in_filename_does_not_match():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 2)
     mock_picture.dirname = "/path/to/pics/2024/10. Oct"
@@ -78,7 +78,8 @@ def test_picture_matcher_by_exif_date_not_in_path_ignores_year_in_filename():
     assert matcher.should_report(mock_picture) is True
 
 
-def test_picture_matcher_by_exif_date_not_in_path_ignores_month_in_filename():
+def test_that_is_reported_when_month_in_filename_does_not_match():
+
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 2)
     mock_picture.dirname = "/path/to/pics/2023/11. Nov"

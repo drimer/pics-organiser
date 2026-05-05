@@ -7,7 +7,7 @@ from tasks.reports import (
 )
 
 
-def test_picture_matcher_by_missing_exif_date():
+def test_that_is_reported_when_exif_date_is_missing():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = None
 
@@ -15,7 +15,7 @@ def test_picture_matcher_by_missing_exif_date():
     assert matcher.should_report(mock_picture) is True
 
 
-def test_picture_matcher_by_missing_exif_date_does_not_match():
+def test_that_is_not_reported_when_exif_date_is_present():
     mock_picture = mock.Mock()
     mock_picture.datetime_taken = datetime(2023, 10, 1)
 
