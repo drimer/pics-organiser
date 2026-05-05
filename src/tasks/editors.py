@@ -12,8 +12,6 @@ def set_exif_date_to_best_guess(
     picture_manager: PictureManager,
     exif_info_guesser: ExifInfoGuesser,
 ) -> Generator[tuple, None, None]:
-    print(f"===> Setting dates from path {path}")
-
     for picture in picture_manager.find_images(path):
         # Do not overwrite existing date if not explicitly allowed
         if (
