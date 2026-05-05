@@ -25,6 +25,12 @@ echo "Test 'pics-org report exif-date-not-in-path' happy path"
 pics-org report exif-date-not-in-path --dir-path ./test_assets
 
 
+# Tests for command: report all
+
+echo "Test 'pics-org report all' happy path"
+pics-org report all --dir-path ./test_assets
+
+
 # Tests for command: edit set-exif-date command
 
 echo "Test 'pics-org edit set-exif-date' happy path"

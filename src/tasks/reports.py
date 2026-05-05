@@ -1,20 +1,25 @@
 import abc
 from datetime import datetime
-from typing import Generator
+from typing import Generator, Iterable
 
 from files.manager import PictureManager
 from files.picture import Picture
 
 
-class PictureMatcher(abc.ABC):
+class PictureReporter(abc.ABC):
 
     @abc.abstractmethod
-    def apply(self, picture: Picture) -> bool:
+    def should_report(self, picture: Picture) -> bool:
+        pass
+
+    @property
+    @abc.abstractmethod
+    def description(self) -> str:
         pass
 
 
-class PictureMatcherByExifDateNotInPath(PictureMatcher):
-    def apply(self, picture: Picture) -> bool:
+class PictureReporterByExifDateNotInPath(PictureReporter):
+    def should_report(self, picture: Picture) -> bool:
         if picture.datetime_taken is None:
             return False
 
@@ -31,11 +36,15 @@ class PictureMatcherByExifDateNotInPath(PictureMatcher):
             or str(picture.datetime_taken.month) not in picture.dirname
         )
 
+    @property
+    def description(self) -> str:
+        return "EXIF date not in the path"
 
-class PictureMatcherByExifDateNotInWhatsappFileName(PictureMatcher):
+
+class PictureReporterByExifDateNotInWhatsappFileName(PictureReporter):
     NUMBER_OF_DAYS_WHATSAPP_FILE_NAME_CAN_BE_OFF = 7
 
-    def apply(self, picture: Picture) -> bool:
+    def should_report(self, picture: Picture) -> bool:
         if picture.datetime_taken is None:
             return False
 
@@ -56,14 +65,22 @@ class PictureMatcherByExifDateNotInWhatsappFileName(PictureMatcher):
         start_filename = f"IMG-{picture.datetime_taken.year}{picture.datetime_taken.month:02d}{picture.datetime_taken.day:02d}"  # noqa: E501
         return not picture.filename.startswith(start_filename)
 
+    @property
+    def description(self) -> str:
+        return "EXIF date does not match the whatsapp file name"
 
-class PictureMatcherByMissingExifDate(PictureMatcher):
-    def apply(self, picture: Picture) -> bool:
+
+class PictureReporterByMissingExifDate(PictureReporter):
+    def should_report(self, picture: Picture) -> bool:
         return picture.datetime_taken is None
 
+    @property
+    def description(self) -> str:
+        return "Missing EXIF date"
 
-class PictureMatcherByMissingExifLocation(PictureMatcher):
-    def apply(self, picture: Picture) -> bool:
+
+class PictureReporterByMissingExifLocation(PictureReporter):
+    def should_report(self, picture: Picture) -> bool:
         if picture.location is None:
             return True
         elif picture.location.alt == (1, 1) and picture.location.alt_ref == 0:
@@ -73,26 +90,15 @@ class PictureMatcherByMissingExifLocation(PictureMatcher):
 
         return False
 
+    @property
+    def description(self) -> str:
+        return "Missing EXIF location"
+
 
 def find_and_report_imgs(
-    path: str, matchers: tuple[PictureMatcher, ...], picture_manager: PictureManager
-) -> Generator[Picture, None, None]:
+    path: str, reporters: Iterable[PictureReporter], picture_manager: PictureManager
+) -> Generator[tuple[Picture, PictureReporter], None, None]:
     for picture in picture_manager.find_images(path):
-        if any(matcher.apply(picture) for matcher in matchers):
-            yield picture
-
-
-def report_imgs_without_exif_date(
-    path: str, picture_manager: PictureManager
-) -> Generator[Picture, None, None]:
-    return find_and_report_imgs(
-        path, (PictureMatcherByMissingExifDate(),), picture_manager
-    )
-
-
-def report_imgs_without_exif_location(
-    path: str, picture_manager: PictureManager
-) -> Generator[Picture, None, None]:
-    return find_and_report_imgs(
-        path, (PictureMatcherByMissingExifLocation(),), picture_manager
-    )
+        for reporter in reporters:
+            if reporter.should_report(picture):
+                yield picture, reporter
