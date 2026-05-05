@@ -11,6 +11,13 @@ Installing the app
         $ uv run python --version
         Python 3.10.11
 
+3. Enable auto-completion for the CLI tool:
+
+.. code-block:: bash
+
+    $ eval "$(_PICS_ORG_COMPLETE=zsh_source pics-org)"  # for zsh
+    $ eval "$(_PICS_ORG_COMPLETE=bash_source pics-org)"  # for bash
+
 
 Setting up development environment
 ==================================
