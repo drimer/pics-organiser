@@ -21,14 +21,14 @@ class PictureMatcherByExifDateNotInPath(PictureMatcher):
         if picture.datetime_taken.month == 1 and picture.datetime_taken.day == 1:
             # Allow end of year to carry over to the next year
             if (
-                str(picture.datetime_taken.year - 1) in picture.path
-                and "12" in picture.path
+                str(picture.datetime_taken.year - 1) in picture.dirname
+                and "12" in picture.dirname
             ):
                 return False
 
         return (
-            str(picture.datetime_taken.year) not in picture.path
-            or str(picture.datetime_taken.month) not in picture.path
+            str(picture.datetime_taken.year) not in picture.dirname
+            or str(picture.datetime_taken.month) not in picture.dirname
         )
 
 
